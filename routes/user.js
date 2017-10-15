@@ -30,6 +30,11 @@ router.post('/createUser', function (req, res) {
       res.send(JSON.stringify({ 'error': '' }))
     }
   })
+  // TODO: add to UserFriends
+  // models.UserFriends.create({
+  //   user: user.id,
+  //   friend: 1
+  // })
 })
 
 router.post('/verifyUser', function (req, res) {

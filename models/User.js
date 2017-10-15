@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = function (sequelize, Sequelize) {
-  var user = sequelize.define('Users', {
+  var Users = sequelize.define('Users', {
     id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
@@ -41,5 +41,11 @@ module.exports = function (sequelize, Sequelize) {
     },
     updatedAt: Sequelize.DATE
   })
-  return user
+
+  Users.associate = function (models) {
+    Users.belongsToMany(Users, { through: 'UserFriends', as: 'user' })
+    Users.belongsToMany(Users, { through: 'UserFriends', as: 'friend' })
+  }
+
+  return Users
 }
