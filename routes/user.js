@@ -107,37 +107,14 @@ router.post('/addFriend', function (req, res) {
   var facebookId = '789' // TODO
   var friendFacebookID = req.body.friendFacebookID
 
-  var userId = new Promise(function (resolve, reject) {
-    models.Users.findOne({
-      where: { facebookId: facebookId }
-    }).then(user => {
-      if (user) {
-        resolve(user.id)
-      } else {
-        helper.errorLog(req.originalUrl, 'User w facebookId=' + facebookId + ' is not found')
-        return res.status(500).send(JSON.stringify({ 'error': '' }))
-      }
-    })
-  })
+  var user = helper.getUser(models, facebookId)
+  var friend = helper.getUser(models, friendFacebookID)
 
-  var friendId = new Promise(function (resolve, reject) {
-    models.Users.findOne({
-      where: { facebookId: friendFacebookID }
-    }).then(user => {
-      if (user) {
-        resolve(user.id)
-      } else {
-        helper.errorLog(req.originalUrl, 'User w facebookId=' + friendFacebookID + ' is not found')
-        return res.status(500).send(JSON.stringify({ 'error': '' }))
-      }
-    })
-  })
-
-  Promise.all([userId, friendId]).then(([userId, friendId]) => {
+  Promise.all([user, friend]).then(([user, friend]) => {
     models.UserFriends.findOrCreate({
       where: {
-        user: userId,
-        friend: friendId
+        user: user.id,
+        friend: friend.id
       }
     }).then(uf => {
       helper.successLog(req.originalUrl, 'User=' + uf[0].friend + ' is friend of User=' + uf[0].user)
@@ -146,6 +123,41 @@ router.post('/addFriend', function (req, res) {
       helper.errorLog(req.originalUrl, e)
       return res.status(500).send(JSON.stringify({ 'error': '' }))
     })
+  }).catch(e => {
+    helper.errorLog(req.originalUrl, e)
+    return res.status(500).send(JSON.stringify({ 'error': '' }))
+  })
+})
+
+router.post('/removeFriend', function (req, res) {
+  var facebookId = '789' // TODO
+  var friendFacebookID = req.body.friendFacebookID
+
+  var user = helper.getUser(models, facebookId)
+  var friend = helper.getUser(models, friendFacebookID)
+
+  Promise.all([user, friend]).then(([user, friend]) => {
+    models.UserFriends.findOne({
+      where: {
+        user: user.id,
+        friend: friend.id
+      }
+    }).then(uf => {
+      if (uf) {
+        uf.destroy()
+        helper.successLog(req.originalUrl, 'User=' + friend.id + ' is now not friend of User=' + user.id)
+        return res.send(JSON.stringify({ 'success': '' }))
+      } else {
+        helper.successLog(req.originalUrl, 'User=' + friend.id + ' is originally not friend of User=' + user.id)
+        return res.send(JSON.stringify({ 'success': '' }))
+      }
+    }).catch(e => {
+      helper.errorLog(req.originalUrl, e)
+      return res.status(500).send(JSON.stringify({ 'error': '' }))
+    })
+  }).catch(e => {
+    helper.errorLog(req.originalUrl, e)
+    return res.status(500).send(JSON.stringify({ 'error': '' }))
   })
 })
 
