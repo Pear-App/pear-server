@@ -162,4 +162,50 @@ router.post('/removeFriend', function (req, res) {
   })
 })
 
+router.get('/friends', function (req, res) {
+  var facebookId = '789' // TODO
+  models.Users.findOne({
+    where: { facebookId: facebookId },
+    include: {
+      model: models.Users,
+      as: 'friend'
+    }
+  }).then(user => {
+    if (user) {
+      helper.successLog(req.originalUrl, 'Fetched friends of User=' + user.id)
+      res.send(JSON.stringify({ 'success': user }))
+    } else {
+      return new Promise(function (resolve, reject) {
+        reject(new Error('User w facebookId=' + facebookId + ' is not found'))
+      })
+    }
+  }).catch(e => {
+    helper.errorLog(req.originalUrl, e)
+    return res.status(500).send(JSON.stringify({ 'error': '' }))
+  })
+})
+
+router.get('/users', function (req, res) {
+  var facebookId = '123' // TODO
+  models.Users.findOne({
+    where: { facebookId: facebookId },
+    include: {
+      model: models.Users,
+      as: 'user'
+    }
+  }).then(user => {
+    if (user) {
+      helper.successLog(req.originalUrl, 'Fetched users of User=' + user.id)
+      res.send(JSON.stringify({ 'success': user }))
+    } else {
+      return new Promise(function (resolve, reject) {
+        reject(new Error('User w facebookId=' + facebookId + ' is not found'))
+      })
+    }
+  }).catch(e => {
+    helper.errorLog(req.originalUrl, e)
+    return res.status(500).send(JSON.stringify({ 'error': '' }))
+  })
+})
+
 module.exports = router
