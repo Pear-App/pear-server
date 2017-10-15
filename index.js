@@ -6,6 +6,24 @@ var app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
+/* START Authentication Configuration START */
+const passport = require('passport')
+const passportJwt = require('passport-jwt')
+app.use(passport.initialize())
+
+const passportJWTOptions = {
+  jwtFromRequest: passportJwt.ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.PEAR_JWT_SIGNING_KEY,
+  issuer: 'api.pear.me',
+  audience: 'pear.me'
+}
+
+passport.use(new passportJwt.Strategy(passportJWTOptions, (jwtPayload, done) => {
+  const user = JSON.parse(jwtPayload.sub).user
+  return done(null, user)
+}))
+/* END Authentication Configuration END */
+
 app.use('/api', require('./routes/index'))
 
 const server = app.listen(3000, '127.0.0.1', function () {
