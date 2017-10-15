@@ -2,6 +2,7 @@ var models = require('../models')
 var helper = require('./helper')
 var express = require('express')
 var router = express.Router()
+var passport = require('passport')
 
 router.post('/createFriend', function (req, res) {
   models.Users.create({
@@ -17,7 +18,7 @@ router.post('/createFriend', function (req, res) {
   })
 })
 
-router.post('/createUser', function (req, res) {
+router.post('/createUser', passport.authenticate(['jwt'], { session: false }), function (req, res) {
   models.Users.create({
     isUser: true,
     nickname: req.body.nickname,
