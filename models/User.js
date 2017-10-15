@@ -43,8 +43,8 @@ module.exports = function (sequelize, Sequelize) {
   })
 
   Users.associate = function (models) {
-    Users.belongsToMany(Users, { through: 'UserFriends', as: 'user' })
-    Users.belongsToMany(Users, { through: 'UserFriends', as: 'friend' })
+    Users.belongsToMany(Users, { through: 'UserFriends', as: 'user', foreignKey: 'friend' })
+    Users.belongsToMany(Users, { through: 'UserFriends', as: 'friend', foreignKey: 'user' })
   }
 
   return Users
