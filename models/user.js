@@ -34,6 +34,10 @@ module.exports = function (sequelize, Sequelize) {
       allowNull: false,
       unique: true
     },
+    facebookToken: {
+      type: Sequelize.STRING,
+      allowNull: false
+    },
     createdAt: {
       type: Sequelize.DATE,
       allowNull: false
