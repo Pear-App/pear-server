@@ -8,12 +8,7 @@ module.exports = function (sequelize, Sequelize) {
       autoIncrement: true,
       allowNull: false
     },
-    isLive: {
-      type: Sequelize.BOOLEAN,
-      allowNull: false,
-      defaultValue: false
-    },
-    isUser: {
+    isSingle: {
       type: Sequelize.BOOLEAN
     },
     nickname: {
@@ -28,7 +23,7 @@ module.exports = function (sequelize, Sequelize) {
     desc: {
       type: Sequelize.STRING
     },
-    name: {
+    facebookName: {
       type: Sequelize.STRING
     },
     facebookId: {

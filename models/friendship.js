@@ -1,14 +1,14 @@
 'use strict'
 
 module.exports = function (sequelize, Sequelize) {
-  var UserFriends = sequelize.define('UserFriends', {
+  var Friendships = sequelize.define('Friendships', {
     id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true,
       allowNull: false
     },
-    user: {
+    single: {
       type: Sequelize.INTEGER,
       references: {
         model: 'Users',
@@ -31,5 +31,5 @@ module.exports = function (sequelize, Sequelize) {
     updatedAt: Sequelize.DATE
   })
 
-  return UserFriends
+  return Friendships
 }
