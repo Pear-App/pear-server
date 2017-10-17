@@ -14,10 +14,6 @@ module.exports = {
   down: (queryInterface, Sequelize) => {
     queryInterface.removeColumn(
       'Users',
-      'facebookToken',
-      {
-        type: Sequelize.STRING,
-        allowNull: false
-      })
+      'facebookToken')
   }
 }

@@ -20,6 +20,18 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.ENUM('M', 'F', 'B'),
       allowNull: false
     },
+    minAge: {
+      type: Sequelize.INTEGER,
+      allowNull: false
+    },
+    maxAge: {
+      type: Sequelize.INTEGER,
+      allowNull: false
+    },
+    interests: {
+      type: Sequelize.STRING,
+      allowNull: false
+    },
     desc: {
       type: Sequelize.STRING,
       allowNull: false
