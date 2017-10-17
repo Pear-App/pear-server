@@ -35,6 +35,9 @@ headers.append("Authorization", `bearer ${jwtToken}`)
           "nickname": "",
           "sex": null,
           "sexualOrientation": null,
+          "minAge": null,
+          "maxAge": null,
+          "interests": null,
           "desc": null,
           "facebookName": "Peter Pan",
           "facebookId": "123456789",
@@ -58,6 +61,9 @@ headers.append("Authorization", `bearer ${jwtToken}`)
       "nickname": "Pete",
       "sex": "M",
       "sexualOrientation": "F",
+      "minAge": 20,
+      "maxAge": 30,
+      "interests": "[{ name: 'Art', active: false },{ name: 'Books', active: false }]",
       "desc": "Great guy!"
    }
    ```
@@ -72,6 +78,9 @@ headers.append("Authorization", `bearer ${jwtToken}`)
           "nickname": "Pete",
           "sex": "M",
           "sexualOrientation": "F",
+          "minAge": 20,
+          "maxAge": 30,
+          "interests": "[{ name: 'Art', active: false },{ name: 'Books', active: false }]",
           "desc": "Great guy!",
           "facebookName": "Peter Pan",
           "facebookId": "123456789",
@@ -141,13 +150,16 @@ headers.append("Authorization", `bearer ${jwtToken}`)
           "facebookToken": "ABCDEFGHIJ",
           "createdAt": "2017-10-17T07:38:50.000Z",
           "updatedAt": "2017-10-17T09:26:19.000Z",
-          "friend": [{
-            "id": 2,
-            "facebookName": "Wonder Woman"
-          }, {
-            "id" 3,
-            "facebookName": "Superman"
-          }]
+          "friend": [
+             {
+               "id": 2,
+               "facebookName": "Wonder Woman"
+             },
+             {
+               "id" 3,
+               "facebookName": "Superman"
+             }
+          ]
       }
       ```
 * **Error Response**: 
@@ -175,13 +187,16 @@ headers.append("Authorization", `bearer ${jwtToken}`)
           "facebookToken": "ABCDEFGHIJ",
           "createdAt": "2017-10-17T07:38:50.000Z",
           "updatedAt": "2017-10-17T09:26:19.000Z",
-          "friend": [{
-            "id": 2,
-            "facebookName": "Wonder Woman"
-          }, {
-            "id" 4,
-            "facebookName": "Aquaman"
-          }]
+          "friend": [
+             {
+               "id": 2,
+               "facebookName": "Wonder Woman"
+             },
+             {
+               "id" 4,
+               "facebookName": "Aquaman"
+             }
+          ]
       }
       ```
 * **Error Response**: 
