@@ -8,13 +8,10 @@ module.exports = function (sequelize, Sequelize) {
       autoIncrement: true,
       allowNull: false
     },
-    isLive: {
+    isSingle: {
       type: Sequelize.BOOLEAN,
       allowNull: false,
       defaultValue: false
-    },
-    isUser: {
-      type: Sequelize.BOOLEAN
     },
     nickname: {
       type: Sequelize.STRING
@@ -28,11 +25,13 @@ module.exports = function (sequelize, Sequelize) {
     desc: {
       type: Sequelize.STRING
     },
-    name: {
-      type: Sequelize.STRING
+    facebookName: {
+      type: Sequelize.STRING,
+      allowNull: false
     },
     facebookId: {
       type: Sequelize.STRING,
+      allowNull: false,
       unique: true
     },
     createdAt: {
@@ -45,6 +44,7 @@ module.exports = function (sequelize, Sequelize) {
   Users.associate = function (models) {
     Users.belongsToMany(Users, { through: 'UserFriends', as: 'user', foreignKey: 'friend' })
     Users.belongsToMany(Users, { through: 'UserFriends', as: 'friend', foreignKey: 'user' })
+    Users.hasMany(models.Invitations, {'as': 'invitations'})
   }
 
   return Users
