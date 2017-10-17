@@ -19,6 +19,175 @@ headers.append("Authorization", `bearer ${jwtToken}`)
       **Content**: `{ message: 'An error occurred with processing your request',
       token: null }`
 
+## User API
+### /user/:id
+* **Method**: `GET`
+* **URL Params**: `id=[userId]`
+* **Data Params**: None
+* **Require JWT**: `true`
+* **Success Response**: 
+    * **Code**: 200 <br />
+      **Content**: 
+      ```json
+      {
+          "id": 1,
+          "isSingle": false,
+          "nickname": "",
+          "sex": null,
+          "sexualOrientation": null,
+          "desc": null,
+          "facebookName": "Peter Pan",
+          "facebookId": "123456789",
+          "facebookToken": "ABCDEFGHIJ",
+          "createdAt": "2017-10-17T07:38:50.000Z",
+          "updatedAt": "2017-10-17T09:26:19.000Z"
+      }
+      ```
+* **Error Response**: 
+    * **Code**: 400 <br />
+      **Content**: `{ message: 'Invalid User id' }`
+    * **Code**: 500 <br />
+      **Content**: `{ message: 'An error occurred with processing your request' }`
+      
+### /user/:id/edit
+* **Method**: `POST`
+* **URL Params**: `id=[userId]`
+* **Data Params**:
+   ```json
+   {
+      "nickname": "Pete",
+      "sex": "M",
+      "sexualOrientation": "F",
+      "desc": "Great guy!"
+   }
+   ```
+* **Require JWT**: `true`
+* **Success Response**: 
+    * **Code**: 200 <br />
+      **Content**:
+      ```json
+      {
+          "id": 1,
+          "isSingle": true,
+          "nickname": "Pete",
+          "sex": "M",
+          "sexualOrientation": "F",
+          "desc": "Great guy!",
+          "facebookName": "Peter Pan",
+          "facebookId": "123456789",
+          "facebookToken": "ABCDEFGHIJ",
+          "createdAt": "2017-10-17T07:38:50.000Z",
+          "updatedAt": "2017-10-17T09:26:19.000Z"
+      }
+      ```
+* **Error Response**: 
+    * **Code**: 400 <br />
+      **Content**: `{ message: 'Invalid User id' }` / `{ message: 'Unauthorized edit' }`
+    * **Code**: 500 <br />
+      **Content**: `{ message: 'An error occurred with processing your request' }`
+
+### /user/friend/add
+* **Method**: `POST`
+* **URL Params**: None
+* **Data Params**:
+   ```json
+   {
+      "friendId": "123"
+   }
+   ```
+* **Require JWT**: `true`
+* **Success Response**: 
+    * **Code**: 200 <br />
+      **Content**: `{}`
+* **Error Response**: 
+    * **Code**: 500 <br />
+      **Content**: `{ message: 'An error occurred with processing your request' }`
+
+### /user/friend/remove
+* **Method**: `POST`
+* **URL Params**: None
+* **Data Params**:
+   ```json
+   {
+      "friendId": "123"
+   }
+   ```
+* **Require JWT**: `true`
+* **Success Response**: 
+    * **Code**: 200 <br />
+      **Content**: `{}`
+* **Error Response**: 
+    * **Code**: 500 <br />
+      **Content**: `{ message: 'An error occurred with processing your request' }`
+
+### /user/friend
+* **Method**: `GET`
+* **URL Params**: None
+* **Data Params**: None
+* **Require JWT**: `true`
+* **Success Response**: 
+    * **Code**: 200 <br />
+      **Content**: 
+      ```json
+      {
+          "id": 1,
+          "isSingle": true,
+          "nickname": "Pete",
+          "sex": "M",
+          "sexualOrientation": "F",
+          "desc": "Great guy!",
+          "facebookName": "Peter Pan",
+          "facebookId": "123456789",
+          "facebookToken": "ABCDEFGHIJ",
+          "createdAt": "2017-10-17T07:38:50.000Z",
+          "updatedAt": "2017-10-17T09:26:19.000Z",
+          "friend": [{
+            "id": 2,
+            "facebookName": "Wonder Woman"
+          }, {
+            "id" 3,
+            "facebookName": "Superman"
+          }]
+      }
+      ```
+* **Error Response**: 
+    * **Code**: 500 <br />
+      **Content**: `{ message: 'An error occurred with processing your request' }`
+
+### /user/single
+* **Method**: `GET`
+* **URL Params**: None
+* **Data Params**: None
+* **Require JWT**: `true`
+* **Success Response**: 
+    * **Code**: 200 <br />
+      **Content**: 
+      ```json
+      {
+          "id": 1,
+          "isSingle": true,
+          "nickname": "Pete",
+          "sex": "M",
+          "sexualOrientation": "F",
+          "desc": "Great guy!",
+          "facebookName": "Peter Pan",
+          "facebookId": "123456789",
+          "facebookToken": "ABCDEFGHIJ",
+          "createdAt": "2017-10-17T07:38:50.000Z",
+          "updatedAt": "2017-10-17T09:26:19.000Z",
+          "friend": [{
+            "id": 2,
+            "facebookName": "Wonder Woman"
+          }, {
+            "id" 4,
+            "facebookName": "Aquaman"
+          }]
+      }
+      ```
+* **Error Response**: 
+    * **Code**: 500 <br />
+      **Content**: `{ message: 'An error occurred with processing your request' }`
+
 # Coming Soon
 ### /deauthenticate
 * **Method**: `POST`
@@ -31,39 +200,6 @@ headers.append("Authorization", `bearer ${jwtToken}`)
 * **Error Response**: 
     * **Code**: 500 <br />
       **Content**: `{ message: 'An error occurred with your fb deauthentication' }`
-
-## User API
-### /user/:id
-* **Method**: `GET`
-* **URL Params**: `id=[userid]`
-* **Data Params**: None
-* **Require JWT**: `true`
-* **Success Response**: 
-    * **Code**: 200 <br />
-      **Content**: `{ }`
-* **Error Response**: 
-    * **Code**: 500 <br />
-      **Content**: `{ message: 'An error occurred with processing your request' }`
-      
-### /user/edit
-* **Method**: `POST`
-* **URL Params**: None
-* **Data Params**: None
-* **Require JWT**: `true`
-* **Success Response**: 
-    * **Code**: 200 <br />
-      **Content**: `{ }`
-* **Error Response**: 
-    * **Code**: 500 <br />
-      **Content**: `{ message: 'An error occurred with processing your request' }`
-
-### /user/friend/add
-
-### /user/friend/remove
-
-### /user/friend
-
-### /user/single
 
 ## Invitation API
 ### /invitation/create
