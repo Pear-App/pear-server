@@ -20,6 +20,10 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.ENUM('M', 'F', 'B'),
       allowNull: false
     },
+    age: {
+      type: Sequelize.INTEGER,
+      allowNull: false
+    },
     minAge: {
       type: Sequelize.INTEGER,
       allowNull: false

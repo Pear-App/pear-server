@@ -40,6 +40,7 @@ router.post('/:id/edit', function (req, res) {
         nickname: req.body.nickname,
         sex: req.body.sex,
         sexualOrientation: req.body.sexualOrientation,
+        age: req.body.age,
         minAge: req.body.minAge,
         maxAge: req.body.maxAge,
         interests: req.body.interests,
