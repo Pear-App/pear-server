@@ -26,29 +26,6 @@ function checkAuth (singleId, friendId) {
   })
 }
 
-router.get('/:id', function (req, res) {
-  models.Users.findOne({
-    where: { id: req.params.id }
-  }).then(user => {
-    if (user) {
-      helper.successLog(req.originalUrl, `GET User id ${req.params.id}`)
-      return res.json(user)
-    } else {
-      return new Promise(function (resolve, reject) {
-        reject(new CustomError('InvalidUserIdError', `Invalid User id ${req.params.id}`, 'Invalid User id'))
-      })
-    }
-  }).catch(e => {
-    if (e.name === 'InvalidUserIdError') {
-      helper.errorLog(req.originalUrl, e)
-      return res.status(400).send({ message: e.clientMsg })
-    } else {
-      helper.errorLog(req.originalUrl, e)
-      return res.status(500).send({ message: SERVER_ERROR_MSG })
-    }
-  })
-})
-
 router.post('/:id/edit', function (req, res) {
   var singleId = req.params.id
   var friendId = req.user.userId
@@ -112,9 +89,8 @@ router.post('/friend/remove', function (req, res) {
     if (fs) {
       return fs.destroy()
     } else {
-      // Friendship not found
       return new Promise(function (resolve, reject) {
-        resolve()
+        resolve() // friendship not found
       })
     }
   }).then(_ => {
@@ -123,6 +99,79 @@ router.post('/friend/remove', function (req, res) {
   }).catch(e => {
     helper.errorLog(req.originalUrl, e)
     return res.status(500).send({ message: SERVER_ERROR_MSG })
+  })
+})
+
+router.get('/friend', function (req, res) {
+  models.Users.findOne({
+    where: { id: req.user.userId },
+    include: {
+      model: models.Users,
+      as: 'friend',
+      attributes: ['id', 'facebookName'],
+      through: { attributes: [] }
+    }
+  }).then(user => {
+    if (user) {
+      helper.successLog(req.originalUrl, `GET friends of User id ${req.user.userId}`)
+      return res.json(user)
+    } else {
+      // should not reach here ever
+      return new Promise(function (resolve, reject) {
+        reject(new CustomError('InvalidUserIdError', `Invalid User id ${req.user.userId}`, 'Invalid User id'))
+      })
+    }
+  }).catch(e => {
+    helper.errorLog(req.originalUrl, e)
+    return res.status(500).send({ message: SERVER_ERROR_MSG })
+  })
+})
+
+router.get('/single', function (req, res) {
+  models.Users.findOne({
+    where: { id: req.user.userId },
+    include: {
+      model: models.Users,
+      as: 'single',
+      attributes: ['id', 'facebookName'],
+      through: { attributes: [] }
+    }
+  }).then(user => {
+    if (user) {
+      helper.successLog(req.originalUrl, `GET singles of User id ${req.user.userId}`)
+      return res.json(user)
+    } else {
+      // should not reach here ever
+      return new Promise(function (resolve, reject) {
+        reject(new CustomError('InvalidUserIdError', `Invalid User id ${req.user.userId}`, 'Invalid User id'))
+      })
+    }
+  }).catch(e => {
+    helper.errorLog(req.originalUrl, e)
+    return res.status(500).send({ message: SERVER_ERROR_MSG })
+  })
+})
+
+router.get('/:id', function (req, res) {
+  models.Users.findOne({
+    where: { id: req.params.id }
+  }).then(user => {
+    if (user) {
+      helper.successLog(req.originalUrl, `GET User id ${req.params.id}`)
+      return res.json(user)
+    } else {
+      return new Promise(function (resolve, reject) {
+        reject(new CustomError('InvalidUserIdError', `Invalid User id ${req.params.id}`, 'Invalid User id'))
+      })
+    }
+  }).catch(e => {
+    if (e.name === 'InvalidUserIdError') {
+      helper.errorLog(req.originalUrl, e)
+      return res.status(400).send({ message: e.clientMsg })
+    } else {
+      helper.errorLog(req.originalUrl, e)
+      return res.status(500).send({ message: SERVER_ERROR_MSG })
+    }
   })
 })
 
