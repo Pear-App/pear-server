@@ -57,3 +57,20 @@ headers.append("Authorization", `bearer ${jwtToken}`)
     * **Code**: 500 <br />
       **Content**: `{ message: 'An error occurred with processing your request' }`
 
+### /user/friend/add
+
+### /user/friend/remove
+
+### /user/friend
+
+### /user/single
+
+## Invitation API
+### /invitation/create
+
+### /invitation/:id
+
+### /invitation/accept
+
+### /invitation/reject
+
