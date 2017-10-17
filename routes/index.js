@@ -4,7 +4,7 @@ var passport = require('passport')
 
 router.use('/authenticate', require('./authenticate'))
 
-router.get('*', passport.authenticate(['jwt'], { session: false }), function (req, res, next) {
+router.use('*', passport.authenticate(['jwt'], { session: false }), function (req, res, next) {
   next()
 })
 

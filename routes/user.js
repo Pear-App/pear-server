@@ -1,10 +1,9 @@
+var express = require('express')
+var router = express.Router()
 var models = require('../models')
 var helper = require('./helper')
 var CustomError = helper.CustomError
 var SERVER_ERROR_MSG = helper.SERVER_ERROR_MSG
-var express = require('express')
-var router = express.Router()
-var passport = require('passport')
 
 router.get('/:id', function (req, res) {
   models.Users.findOne({
@@ -57,6 +56,21 @@ router.post('/:id/edit', function (req, res) {
       helper.errorLog(req.originalUrl, e)
       return res.status(500).send({ message: SERVER_ERROR_MSG })
     }
+  })
+})
+
+router.post('/friend/add', function (req, res) {
+  models.Friendships.findOrCreate({
+    where: {
+      single: req.user.userId,
+      friend: req.body.friendId
+    }
+  }).then(fs => {
+    helper.successLog(req.originalUrl, `Created Friendship where single id ${fs[0].single} and friend id ${fs[0].friend}`)
+    return res.json({})
+  }).catch(e => {
+    helper.errorLog(req.originalUrl, e)
+    return res.status(500).send({ message: SERVER_ERROR_MSG })
   })
 })
 
