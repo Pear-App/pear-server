@@ -1,11 +1,13 @@
 var express = require('express')
 var router = express.Router()
+var passport = require('passport')
 
-router.use('/user', require('./user'))
 router.use('/authenticate', require('./authenticate'))
 
-router.get('/', function (req, res) {
-  res.send(req.originalUrl)
+router.get('*', passport.authenticate(['jwt'], { session: false }), function (req, res, next) {
+  next()
 })
+
+router.use('/user', require('./user'))
 
 module.exports = router
