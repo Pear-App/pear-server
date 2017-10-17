@@ -22,6 +22,15 @@ module.exports = function (sequelize, Sequelize) {
     sexualOrientation: {
       type: Sequelize.ENUM('M', 'F', 'B')
     },
+    minAge: {
+      type: Sequelize.INTEGER
+    },
+    maxAge: {
+      type: Sequelize.INTEGER
+    },
+    interests: {
+      type: Sequelize.STRING
+    },
     desc: {
       type: Sequelize.STRING
     },
