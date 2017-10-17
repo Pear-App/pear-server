@@ -1,4 +1,4 @@
-// var helper = require('./helper')
+var helper = require('./helper')
 const models = require('../models')
 const express = require('express')
 const router = express.Router()
@@ -10,7 +10,7 @@ const fbClientId = process.env.PEAR_FB_CLIENT_ID
 const fbClientSecret = process.env.PEAR_FB_CLIENT_SECRET
 
 const generateUserToken = (payload) => {
-  const expiresIn = '1d'
+  const expiresIn = '21d'
   const issuer = 'api.pear.me'
   const audience = 'pear.me'
   const secret = process.env.PEAR_JWT_SIGNING_KEY
@@ -40,9 +40,7 @@ router.post('/', (req, res) => {
 
   if (!oldFbToken) {
     res.status(400).send({
-      status: 400,
-      message: 'FB client access token not found in request body',
-      token: null
+      message: 'FB client access token not found in request body'
     })
     return
   }
@@ -54,37 +52,28 @@ router.post('/', (req, res) => {
     return Promise.all([getFBUser(newFbToken), Promise.resolve(newFbToken)])
   }).then((userAndToken) => {
     const user = userAndToken[0]
-    const fbToken = userAndToken[1]
+    // const fbToken = userAndToken[1]
 
-    const fbId = user.id
-    const displayName = user.name.substring(0, 25)
-    return Promise.all([
-      models.Users.findOrCreate({
-        where: {
-          facebookId: fbId
-        },
-        facebookId: fbId,
-        displayName
-      }),
-      Promise.resolve(fbToken)
-    ])
-  }).then((userAndToken) => {
-    const user = userAndToken[0]
-    const fbToken = userAndToken[1]
-    const payload = {
-      user
-    }
-    const jwtToken = generateUserToken(payload)
-    res.json({
-      fbToken,
-      jwtToken
+    const facebookId = user.id
+    const facebookName = user.name
+    return models.Users.findOrCreate({
+      where: {
+        facebookId
+      },
+      defaults: {
+        facebookName
+      }
     })
+  }).then((user) => {
+    const payload = {
+      userId: user.id
+    }
+    const jwt = generateUserToken(payload)
+    res.json({ jwt })
   }).catch((err) => {
-    console.error(err)
+    helper.errorLog(req.originalUrl, err)
     res.status(500).send({
-      status: 500,
-      message: 'An error occurred with processing your request',
-      token: null
+      message: 'An error occurred with processing your request'
     })
   })
 })
