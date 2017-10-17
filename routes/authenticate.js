@@ -52,7 +52,7 @@ router.post('/', (req, res) => {
     return Promise.all([getFBUser(newFbToken), Promise.resolve(newFbToken)])
   }).then((userAndToken) => {
     const user = userAndToken[0]
-    // const fbToken = userAndToken[1]
+    const facebookToken = userAndToken[1]
 
     const facebookId = user.id
     const facebookName = user.name
@@ -61,7 +61,8 @@ router.post('/', (req, res) => {
         facebookId
       },
       defaults: {
-        facebookName
+        facebookName,
+        facebookToken
       }
     })
   }).then((user) => {
