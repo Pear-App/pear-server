@@ -67,7 +67,9 @@ router.post('/', (req, res) => {
     })
   }).then((user) => {
     const payload = {
-      userId: user.id
+      user: {
+        userId: user[0].id
+      }
     }
     const jwt = generateUserToken(payload)
     res.json({ jwt })
