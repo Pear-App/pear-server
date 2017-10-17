@@ -8,14 +8,6 @@ module.exports = function (sequelize, Sequelize) {
       autoIncrement: true,
       allowNull: false
     },
-    inviter: {
-      type: Sequelize.INTEGER,
-      references: {
-        model: 'Users',
-        key: 'id'
-      },
-      allowNull: false
-    },
     nickname: {
       type: Sequelize.STRING,
       allowNull: false
