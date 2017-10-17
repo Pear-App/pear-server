@@ -9,7 +9,9 @@ module.exports = function (sequelize, Sequelize) {
       allowNull: false
     },
     isSingle: {
-      type: Sequelize.BOOLEAN
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     },
     nickname: {
       type: Sequelize.STRING
@@ -24,10 +26,12 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.STRING
     },
     facebookName: {
-      type: Sequelize.STRING
+      type: Sequelize.STRING,
+      allowNull: false
     },
     facebookId: {
       type: Sequelize.STRING,
+      allowNull: false,
       unique: true
     },
     createdAt: {
