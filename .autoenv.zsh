@@ -1,0 +1,9 @@
+export PEAR_HOST_DEV=127.0.0.1
+export PEAR_HOST=pear.c0t5zumpiujt.ap-southeast-1.rds.amazonaws.com
+export PEAR_PORT=3306
+export PEAR_USER=pear
+export PEAR_PASSWORD=7ML8Mjp7Ehj5Nc4xfju3nCNUXWTv6H5g
+export PEAR_DATABASE=pear
+export PEAR_JWT_SIGNING_KEY=236cc1dfdfca8f1c8f19fa17bdaa9ed9a968d7afcd96565a286bf519f0248a7c
+export PEAR_FB_CLIENT_ID=2012482058985830
+export PEAR_FB_CLIENT_SECRET=028370f4b7e74c82e9f6d08740c3675e
