@@ -26,10 +26,18 @@ passport.use(new passportJwt.Strategy(passportJWTOptions, (jwtPayload, done) => 
 
 app.use('/api', require('./routes/index'))
 
-const server = app.listen(3000, '127.0.0.1', function () {
-  const host = server.address().address
-  const port = server.address().port
-  console.log('Pear listening at https://%s:%s', host, port)
-})
+if (process.env.NODE_ENV === 'production') {
+  var server = app.listen(3000, function () {
+    var host = server.address().address
+    var port = server.address().port
+    console.log('Pear listening at https://%s:%s', host, port)
+  })
+} else {
+  var devServer = app.listen(3000, '127.0.0.1', function () {
+    var host = devServer.address().address
+    var port = devServer.address().port
+    console.log('Pear listening at https://%s:%s', host, port)
+  })
+}
 
 module.exports = app
