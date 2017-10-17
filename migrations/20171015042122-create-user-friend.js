@@ -30,6 +30,12 @@ module.exports = {
         allowNull: false
       },
       updatedAt: Sequelize.DATE
+    }, {
+      uniqueKeys: {
+        uniqueFriendship: {
+          fields: ['user', 'friend']
+        }
+      }
     })
   },
 

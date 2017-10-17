@@ -14,7 +14,8 @@ module.exports = function (sequelize, Sequelize) {
         model: 'Users',
         key: 'id'
       },
-      allowNull: false
+      allowNull: false,
+      unique: 'uniqueFriendship'
     },
     friend: {
       type: Sequelize.INTEGER,
@@ -22,7 +23,8 @@ module.exports = function (sequelize, Sequelize) {
         model: 'Users',
         key: 'id'
       },
-      allowNull: false
+      allowNull: false,
+      unique: 'uniqueFriendship'
     },
     createdAt: {
       type: Sequelize.DATE,
