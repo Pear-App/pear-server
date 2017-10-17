@@ -40,6 +40,7 @@ module.exports = function (sequelize, Sequelize) {
   Users.associate = function (models) {
     Users.belongsToMany(Users, { through: 'UserFriends', as: 'user', foreignKey: 'friend' })
     Users.belongsToMany(Users, { through: 'UserFriends', as: 'friend', foreignKey: 'user' })
+    Users.hasMany(models.Invitations, {'as': 'invitations'})
   }
 
   return Users
