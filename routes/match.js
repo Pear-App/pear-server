@@ -83,8 +83,7 @@ router.get('/:id/friend', function (req, res) {
       where: {
         id: {
           $in: candidatesList,
-          $notIn: seenCandidatesList,
-          $notIn: [singleId, friendId]
+          $notIn: seenCandidatesList.concat([singleId, friendId])
         }
       },
       limit: 10
