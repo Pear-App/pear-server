@@ -98,7 +98,7 @@ headers.append("Authorization", `bearer ${jwtToken}`)
     * **Code**: 500 <br />
       **Content**: `{ message: 'An error occurred with processing your request' }`
 
-### /user/friend/add
+### /user/friend
 * **Method**: `POST`
 * **URL Params**: None
 * **Data Params**:
@@ -115,8 +115,8 @@ headers.append("Authorization", `bearer ${jwtToken}`)
     * **Code**: 500 <br />
       **Content**: `{ message: 'An error occurred with processing your request' }`
 
-### /user/friend/remove
-* **Method**: `POST`
+### /user/friend
+* **Method**: `DELETE`
 * **URL Params**: None
 * **Data Params**:
    ```json
