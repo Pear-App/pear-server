@@ -49,9 +49,9 @@ module.exports = function (sequelize, Sequelize) {
   })
 
   Matches.associate = function (models) {
-    Matches.belongsTo(models.Users, {'as': 'matchCandidate'})
-    Matches.belongsTo(models.Users, {'as': 'matchSingle'})
-    Matches.belongsTo(models.Users, {'as': 'matchFriend'})
+    Matches.belongsTo(models.Users, { as: 'candidates', foreignKey: 'candidate' })
+    Matches.belongsTo(models.Users, { as: 'singles', foreignKey: 'single' })
+    Matches.belongsTo(models.Users, { as: 'friends', foreignKey: 'friend' })
   }
 
   return Matches
