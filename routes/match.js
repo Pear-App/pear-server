@@ -79,6 +79,9 @@ router.get('/friend/:id', function (req, res) {
         minAge: { $lte: user.age },
         maxAge: { $gte: user.age }
       },
+      attributes: {
+        exclude: ['facebookToken', 'minAge', 'maxAge', 'sexualOrientation', 'createdAt', 'updatedAt']
+      },
       limit: 10
     })
   }).then(candidates => {
@@ -144,6 +147,9 @@ router.get('/single', function (req, res) {
     return models.Users.findAll({
       where: {
         id: { $notIn: seenCandidatesList }
+      },
+      attributes: {
+        exclude: ['facebookToken', 'minAge', 'maxAge', 'sexualOrientation', 'createdAt', 'updatedAt']
       },
       include: [{
         model: models.Matches,
