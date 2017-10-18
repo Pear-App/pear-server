@@ -54,7 +54,7 @@ function getSeenCandidates (singleId, friendId) {
   })
 }
 
-router.get('/:id/friend', function (req, res) {
+router.get('/friend/:id', function (req, res) {
   // TODO: add match algorithm
   // TODO: shuffle candidates
 
@@ -95,22 +95,22 @@ router.get('/:id/friend', function (req, res) {
   })
 })
 
-router.post('/:id/friend', function (req, res) {
+router.post('/friend/:id', function (req, res) {
   var friendId = req.user.userId
   var singleId = req.params.id
   var candidateId = req.body.candidateId
-  var choice = req.body.choice
+  var friendChoice = req.body.friendChoice
 
   checkAuth(singleId, friendId).then(_ => {
     return models.Matches.create({
       single: singleId,
       friend: friendId,
       candidate: candidateId,
-      friendChoice: choice
+      friendChoice: friendChoice
     })
   }).then(match => {
     helper.successLog(req.originalUrl, `Created Match id ${match.id} where single id ${singleId}, friend id ${friendId}, candidate id ${candidateId}`)
-    helper.successLog(req.originalUrl, `For Match id ${match.id}, friend swiped ${choice}`)
+    helper.successLog(req.originalUrl, `For Match id ${match.id}, friend swiped ${friendChoice}`)
     res.json({})
   }).catch(e => {
     if (e.name === 'InvalidFriendshipIdError') {
@@ -170,7 +170,7 @@ router.get('/single', function (req, res) {
 router.post('/single', function (req, res) {
   var singleId = req.user.userId
   var candidateId = req.body.candidateId
-  var choice = req.body.choice
+  var singleChoice = req.body.singleChoice
 
   models.Matches.findOne({
     where: {
@@ -179,10 +179,10 @@ router.post('/single', function (req, res) {
     }
   }).then(match => {
     return match.updateAttributes({
-      singleChoice: choice
+      singleChoice: singleChoice
     })
   }).then(match => {
-    helper.successLog(req.originalUrl, `single id ${singleId} swiped ${choice} to candidate id ${candidateId}`)
+    helper.successLog(req.originalUrl, `single id ${singleId} swiped ${singleChoice} to candidate id ${candidateId}`)
     res.json({})
   }).catch(e => {
     helper.errorLog(req.originalUrl, e)
