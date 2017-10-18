@@ -123,7 +123,7 @@ router.post('/:id/friend', function (req, res) {
     helper.successLog(req.originalUrl, `For Match id ${match.id}, friend swiped ${choice}`)
     res.json({})
   }).catch(e => {
-    if (e.name === 'InvalidUserIdError' || e.name === 'InvalidFriendshipIdError') {
+    if (e.name === 'InvalidFriendshipIdError') {
       helper.errorLog(req.originalUrl, e)
       return res.status(400).send({ message: e.clientMsg })
     } else {
@@ -133,12 +133,71 @@ router.post('/:id/friend', function (req, res) {
   })
 })
 
-router.get('/:id/single', function (req, res) {
-  res.json('') // TODO
+router.get('/single', function (req, res) {
+  var singleId = req.user.userId
+
+  models.Users.findAll({
+    attributes: ['id'],
+    include: [{
+      model: models.Matches,
+      where: {
+        single: singleId,
+        singleChoice: {
+          $in: [true, false]
+        }
+      },
+      as: 'candidates',
+      required: true,
+      attributes: []
+    }]
+  }).then(seenCandidates => {
+    var seenCandidatesList = seenCandidates.map(function (candidate) { return candidate.id })
+    return models.Users.findAll({
+      where: {
+        id: { $notIn: seenCandidatesList }
+      },
+      include: [{
+        model: models.Matches,
+        where: {
+          single: singleId,
+          friendChoice: true,
+          singleChoice: null
+        },
+        as: 'candidates',
+        required: true,
+        attributes: []
+      }]
+    })
+  }).then(candidates => {
+    helper.successLog(req.originalUrl, `GET candidates for single id ${singleId}`)
+    res.json(candidates)
+  }).catch(e => {
+    helper.errorLog(req.originalUrl, e)
+    return res.status(500).send({ message: SERVER_ERROR_MSG })
+  })
 })
 
-router.post('/:id/single', function (req, res) {
-  res.json('') // TODO
+router.post('/single', function (req, res) {
+  var singleId = req.user.userId
+  var candidateId = req.body.candidateId
+  var choice = req.body.choice
+
+  models.Matches.findOne({
+    where: {
+      single: singleId,
+      candidate: candidateId
+    }
+  }).then(match => {
+    return match.updateAttributes({
+      singleChoice: choice
+    })
+  }).then(match => {
+    helper.successLog(req.originalUrl, `single id ${singleId} swiped ${choice} to candidate id ${candidateId}`)
+    res.json({})
+  }).catch(e => {
+    helper.errorLog(req.originalUrl, e)
+    return res.status(500).send({ message: SERVER_ERROR_MSG })
+  })
 })
 
 module.exports = router
