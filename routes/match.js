@@ -22,27 +22,13 @@ function checkAuth (singleId, friendId) {
   })
 }
 
-function getCandidates (singleId) {
+function getUser (singleId) {
   return new Promise(function (resolve, reject) {
     models.Users.findOne({
       where: { id: singleId }
     }).then(user => {
       if (user) {
-        models.Users.findAll({
-          where: {
-            isSingle: true,
-            sex: user.sexualOrientation,
-            age: { $between: [user.minAge, user.maxAge] },
-            sexualOrientation: user.sex,
-            minAge: { $lte: user.age },
-            maxAge: { $gte: user.age }
-          },
-          attributes: ['id']
-        }).then(candidates => {
-          resolve(candidates)
-        }).catch(e => {
-          reject(e)
-        })
+        resolve(user)
       } else {
         reject(new CustomError('InvalidUserIdError', `Invalid User id ${singleId}`, 'Invalid User id'))
       }
@@ -76,18 +62,22 @@ router.get('/:id/friend', function (req, res) {
   var singleId = req.params.id
 
   var permission = checkAuth(singleId, friendId)
-  var candidates = getCandidates(singleId)
+  var user = getUser(singleId)
   var seenCandidates = getSeenCandidates(singleId, friendId)
 
-  Promise.all([permission, candidates, seenCandidates]).then(([permission, candidates, seenCandidates]) => {
-    var candidatesList = candidates.map(function (candidate) { return candidate.id })
+  Promise.all([permission, user, seenCandidates]).then(([permission, user, seenCandidates]) => {
     var seenCandidatesList = seenCandidates.map(function (candidate) { return candidate.id })
     return models.Users.findAll({
       where: {
         id: {
-          $in: candidatesList,
           $notIn: seenCandidatesList.concat([singleId, friendId])
-        }
+        },
+        isSingle: true,
+        sex: user.sexualOrientation,
+        age: { $between: [user.minAge, user.maxAge] },
+        sexualOrientation: user.sex,
+        minAge: { $lte: user.age },
+        maxAge: { $gte: user.age }
       },
       limit: 10
     })
