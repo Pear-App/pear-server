@@ -16,7 +16,7 @@ function checkAuth (singleId, friendId) {
       if (fs) {
         resolve() // friendship exists
       } else {
-        reject(new CustomError('InvalidFriendshipIdError', `User id ${friendId} not friend of User id ${singleId}`, 'Unauthorized access to candidate list'))
+        reject(new CustomError('InvalidFriendshipIdError', `User id ${friendId} not friend of User id ${singleId}`, 'Unauthorized access'))
       }
     })
   })
@@ -102,15 +102,39 @@ router.get('/:id/friend', function (req, res) {
   })
 })
 
-router.get('/match/:id/single', function (req, res) {
+router.get('/:id/single', function (req, res) {
   res.json('') // TODO
 })
 
-router.post('/match/:id/friend', function (req, res) {
-  res.json('') // TODO
+router.post('/:id/friend', function (req, res) {
+  var friendId = req.user.userId
+  var singleId = req.params.id
+  var candidateId = req.body.candidateId
+  var choice = req.body.choice
+
+  checkAuth(singleId, friendId).then(_ => {
+    return models.Matches.create({
+      single: singleId,
+      friend: friendId,
+      candidate: candidateId,
+      friendChoice: choice
+    })
+  }).then(match => {
+    helper.successLog(req.originalUrl, `Created Match id ${match.id} where single id ${singleId}, friend id ${friendId}, candidate id ${candidateId}`)
+    helper.successLog(req.originalUrl, `For Match id ${match.id}, friend swiped ${choice}`)
+    res.json({})
+  }).catch(e => {
+    if (e.name === 'InvalidUserIdError' || e.name === 'InvalidFriendshipIdError') {
+      helper.errorLog(req.originalUrl, e)
+      return res.status(400).send({ message: e.clientMsg })
+    } else {
+      helper.errorLog(req.originalUrl, e)
+      return res.status(500).send({ message: SERVER_ERROR_MSG })
+    }
+  })
 })
 
-router.post('/match/:id/single', function (req, res) {
+router.post('/:id/single', function (req, res) {
   res.json('') // TODO
 })
 
