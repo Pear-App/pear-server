@@ -82,7 +82,7 @@ router.get('/friend/:id', function (req, res) {
       limit: 10
     })
   }).then(candidates => {
-    helper.successLog(req.originalUrl, `friend id ${friendId} GET candidates for single id ${singleId}`)
+    helper.successLog(req.originalUrl, `friend id ${friendId} gets candidates for single id ${singleId}`)
     res.json(candidates)
   }).catch(e => {
     if (e.name === 'InvalidUserIdError' || e.name === 'InvalidFriendshipIdError') {
@@ -109,8 +109,7 @@ router.post('/friend/:id', function (req, res) {
       friendChoice: friendChoice
     })
   }).then(match => {
-    helper.successLog(req.originalUrl, `Created Match id ${match.id} where single id ${singleId}, friend id ${friendId}, candidate id ${candidateId}`)
-    helper.successLog(req.originalUrl, `For Match id ${match.id}, friend swiped ${friendChoice}`)
+    helper.successLog(req.originalUrl, `friend id ${friendId} swipes ${friendChoice} to candidate id ${candidateId} for single id ${singleId}`)
     res.json({})
   }).catch(e => {
     if (e.name === 'InvalidFriendshipIdError') {
@@ -159,7 +158,7 @@ router.get('/single', function (req, res) {
       }]
     })
   }).then(candidates => {
-    helper.successLog(req.originalUrl, `GET candidates for single id ${singleId}`)
+    helper.successLog(req.originalUrl, `single id ${singleId} gets candidates`)
     res.json(candidates)
   }).catch(e => {
     helper.errorLog(req.originalUrl, e)
@@ -182,7 +181,7 @@ router.post('/single', function (req, res) {
       singleChoice: singleChoice
     })
   }).then(match => {
-    helper.successLog(req.originalUrl, `single id ${singleId} swiped ${singleChoice} to candidate id ${candidateId}`)
+    helper.successLog(req.originalUrl, `single id ${singleId} swipes ${singleChoice} to candidate id ${candidateId}`)
     res.json({})
   }).catch(e => {
     helper.errorLog(req.originalUrl, e)
