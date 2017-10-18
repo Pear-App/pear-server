@@ -371,12 +371,137 @@ headers.append("Authorization", `bearer ${jwtToken}`)
       **Content**: `{ message: 'An error occurred with processing your request' }`
 
 ### /invitation/:id
+* **Method**: `GET`
+* **URL Params**: `id=[invitationId]`
+* **Data Params**: None
+* **Require JWT**: `true`
+* **Success Response**:
+    * **Code**: 200 <br />
+      **Content**:
+      ```json
+      {
+          "id": 20,
+          "nickname": "Puma",
+          "sex": "M",
+          "sexualOrientation": "M",
+          "age": 51,
+          "minAge": 52,
+          "maxAge": 63,
+          "interests": "[{ name: 'Running', active: false },{ name: 'Sprinting', active: false }]",
+          "desc": "I like to Run",
+          "status": "Y",
+          "createdAt": "2017-10-18T16:58:54.000Z",
+          "updatedAt": "2017-10-18T17:11:01.000Z",
+          "inviterId": 3,
+          "inviter": {
+              "id": 3,
+              "facebookName": "Ng Si Kai",
+              "facebookId": "123456789"
+          }
+      }
+      ```
+* **Error Response**:
+    * **Code**: 400 <br />
+      **Content**: `{ message: 'Invalid Invitation id' }`
+    * **Code**: 500 <br />
+      **Content**: `{ message: 'An error occurred with processing your request' }`
 
 ### /invitation/me
+* **Method**: `POST`
+* **URL Params**: None
+* **Data Params**: None
+* **Require JWT**: `true`
+* **Success Response**:
+    * **Code**: 200 <br />
+      **Content**: 
+      ```json
+      [
+          {
+              "id": 16,
+              "nickname": "Pig",
+              "sex": "M",
+              "sexualOrientation": "F",
+              "age": 21,
+              "minAge": 18,
+              "maxAge": 22,
+              "interests": "[{ name: 'Fishes', active: false },{ name: 'Swimming', active: false }]",
+              "desc": "I like to fish",
+              "status": "Y",
+              "createdAt": "2017-10-18T06:58:28.000Z",
+              "updatedAt": "2017-10-18T09:58:05.000Z",
+              "inviterId": 3
+          },
+          {
+              "id": 17,
+              "nickname": "Mouse",
+              "sex": "F",
+              "sexualOrientation": "F",
+              "age": 41,
+              "minAge": 48,
+              "maxAge": 52,
+              "interests": "[{ name: 'Diving', active: true }]",
+              "desc": "I like to dive",
+              "status": "Y",
+              "createdAt": "2017-10-18T10:11:01.000Z",
+              "updatedAt": "2017-10-18T10:13:12.000Z",
+              "inviterId": 3
+          },
+          {
+              "id": 18,
+              "nickname": "Tiger",
+              "sex": "F",
+              "sexualOrientation": "F",
+              "age": 1,
+              "minAge": 2,
+              "maxAge": 3,
+              "interests": "[{ name: 'Birds', active: false }]",
+              "desc": "I like to fly",
+              "status": "N",
+              "createdAt": "2017-10-18T10:34:02.000Z",
+              "updatedAt": "2017-10-18T10:34:09.000Z",
+              "inviterId": 3
+          }
+      ]
+      ```
+* **Error Response**:
+    * **Code**: 500 <br />
+      **Content**: `{ message: 'An error occurred with processing your request' }`
 
 ### /invitation/:id/accept
+* **Method**: `POST`
+* **URL Params**: `id=[invitationId]`
+* **Data Params**: None
+* **Require JWT**: `true`
+* **Success Response**:
+    * **Code**: 200 <br />
+      **Content**: 
+      ```json
+      {}
+      ```
+* **Error Response**:
+    * **Code**: 400 <br />
+      **Content**: `{ message: 'Invalid Invitation id' }`
+    * **Code**: 400 <br />
+      **Content**: `{ message: 'Invalid User id' }`
+    * **Code**: 500 <br />
+      **Content**: `{ message: 'An error occurred with processing your request' }`
 
 ### /invitation/:id/reject
+* **Method**: `POST`
+* **URL Params**: `id=[invitationId]`
+* **Data Params**: None
+* **Require JWT**: `true`
+* **Success Response**:
+    * **Code**: 200 <br />
+      **Content**: 
+      ```json
+      {}
+      ```
+* **Error Response**:
+    * **Code**: 400 <br />
+      **Content**: `{ message: 'Invalid Invitation id' }`
+    * **Code**: 500 <br />
+      **Content**: `{ message: 'An error occurred with processing your request' }`
 
 # Coming Soon
 ### /deauthenticate
