@@ -5,10 +5,10 @@ var SERVER_ERROR_MSG = helper.SERVER_ERROR_MSG
 var express = require('express')
 var router = express.Router()
 
-router.post('/create', function (req, res) {
+router.post('/', function (req, res) {
   const inviterId = req.user.userId
   models.Invitations.create({
-    inviter: inviterId,
+    inviterId: inviterId,
     nickname: req.body.nickname,
     sex: req.body.sex,
     sexualOrientation: req.body.sexualOrientation,
@@ -26,44 +26,22 @@ router.post('/create', function (req, res) {
   })
 })
 
-/*
-  Queries for a single user and invitation
-  (userId, invitationId) -> Promise([userObject, invitationObject])
-  throws InvalidUserIdError, InvalidInvitationIdError
-*/
-function getUserAndInvitation (userId, invitationId) {
-  return Promise.all([
-    models.Users.findById(userId),
-    models.Invitations.findById(invitationId)
-  ]).then(userAndInvitation => {
-    const user = userAndInvitation[0]
-    const invitation = userAndInvitation[1]
-    if (!user) {
-      return Promise.reject(new CustomError('InvalidUserIdError', `Invalid User id ${userId}`, 'Invalid User id'))
-    }
+router.get('/:id', function (req, res) {
+  const invitationId = req.params.id
+  models.Invitations.findById(invitationId, {
+    include: [{
+      model: models.Users,
+      as: 'inviter',
+      attributes: ['id', 'facebookName', 'facebookId']
+    }]
+  }).then(invitation => {
     if (!invitation) {
       return Promise.reject(new CustomError('InvalidInvitationIdError', `Invalid Invitation id ${invitationId}`, 'Invalid Invitation id'))
     }
-    return userAndInvitation
-  })
-}
-
-router.get('/:id', function (req, res) {
-  const userId = req.user.userId
-  const invitationId = req.params.id
-  getUserAndInvitation(
-    userId,
-    invitationId
-  ).then(userAndInvitation => {
-    const user = userAndInvitation[0]
-    const invitation = userAndInvitation[1]
-    helper.successLog(req.originalUrl, `GET isSingle status and Invitation with id ${invitationId}`)
-    return res.json({
-      isSingle: user.isSingle,
-      invitation
-    })
+    helper.successLog(req.originalUrl, `GET Invitation with id ${invitationId}`)
+    return res.json(invitation)
   }).catch((e) => {
-    if (e.name === 'InvalidUserIdError' || e.name === 'InvalidInvitationIdError') {
+    if (e.name === 'InvalidInvitationIdError') {
       helper.errorLog(req.originalUrl, e)
       return res.status(400).send({ message: e.clientMsg })
     } else {
@@ -73,33 +51,49 @@ router.get('/:id', function (req, res) {
   })
 })
 
+/*
+  Queries for a single user and invitation
+  (userId, invitationId) -> Promise([userObject, invitationObject])
+  throws InvalidUserIdError, InvalidInvitationIdError
+*/
+function getUserAndInvitation (userId, invitationId) {
+  return Promise.all([
+    models.Users.findById(userId),
+    models.Invitations.findById(invitationId)
+  ]).then(([user, invitation]) => {
+    if (!user) {
+      return Promise.reject(new CustomError('InvalidUserIdError', `Invalid User id ${userId}`, 'Invalid User id'))
+    }
+    if (!invitation) {
+      return Promise.reject(new CustomError('InvalidInvitationIdError', `Invalid Invitation id ${invitationId}`, 'Invalid Invitation id'))
+    }
+    return [user, invitation]
+  })
+}
+
 // TODO: Make into atomic transaction
-router.post('/accept', function (req, res) {
+router.post('/:id/accept', function (req, res) {
   const userId = req.user.userId
-  const invitationId = req.body.invitationId
+  const invitationId = req.params.id
   getUserAndInvitation(
     userId,
     invitationId
-  ).then(userAndInvitation => {
-    const invitation = userAndInvitation[1]
+  ).then(([user, invitation]) => {
     if (invitation.status !== 'P') {
       return Promise.reject(new CustomError('UsedInvitationError', `There is already a response given for Invitation id ${invitationId}`, 'Invalid Invitation id'))
     }
-    const friendShip = models.Friendships.findOrCreate({
+    const friendship = models.Friendships.findOrCreate({
       where: {
         single: userId,
-        friend: invitation.inviter
+        friend: invitation.inviterId
       }
     })
     return Promise.all([
-      Promise.resolve(userAndInvitation),
-      friendShip
+      Promise.resolve(user),
+      Promise.resolve(invitation),
+      friendship
     ])
-  }).then(userAndInvitationAndFriendship => {
-    const userAndInvitation = userAndInvitationAndFriendship[0]
-    const friendship = userAndInvitationAndFriendship[1]
-    const user = userAndInvitation[0]
-    const invitation = userAndInvitation[1]
+  }).then(([user, invitation, friendship]) => {
     if (friendship) {
       helper.successLog(req.originalUrl, `Created Friendship where single id ${friendship[0].single} and friend id ${friendship[0].friend}`)
     }
@@ -127,9 +121,7 @@ router.post('/accept', function (req, res) {
       invitationUpdate,
       Promise.resolve('Already Single')
     ])
-  }).then(updates => {
-    const invitationUpdate = updates[0]
-    const userUpdate = updates[1]
+  }).then(([invitationUpdate, userUpdate]) => {
     if (invitationUpdate) {
       helper.successLog(req.originalUrl, `Updated invitation status of Invitation id ${invitationUpdate.id} to Accepted`)
     }
@@ -150,8 +142,8 @@ router.post('/accept', function (req, res) {
   })
 })
 
-router.post('/reject', function (req, res) {
-  const invitationId = req.body.invitationId
+router.post('/:id/reject', function (req, res) {
+  const invitationId = req.params.id
   models.Invitations.findById(
     invitationId
   ).then(invitation => {

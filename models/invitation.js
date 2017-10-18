@@ -53,7 +53,7 @@ module.exports = function (sequelize, Sequelize) {
   })
 
   Invitations.associate = function (models) {
-    Invitations.belongsTo(models.Users, { foreignKey: 'inviter' })
+    Invitations.belongsTo(models.Users, { as: 'inviter', foreignKey: 'inviterId' })
   }
 
   return Invitations
