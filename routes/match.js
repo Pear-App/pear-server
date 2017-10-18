@@ -5,6 +5,23 @@ var helper = require('./helper')
 var CustomError = helper.CustomError
 var SERVER_ERROR_MSG = helper.SERVER_ERROR_MSG
 
+function checkAuth (singleId, friendId) {
+  return new Promise(function (resolve, reject) {
+    models.Friendships.findOne({
+      where: {
+        single: singleId,
+        friend: friendId
+      }
+    }).then(fs => {
+      if (fs) {
+        resolve() // friendship exists
+      } else {
+        reject(new CustomError('InvalidFriendshipIdError', `User id ${friendId} not friend of User id ${singleId}`, 'Unauthorized access to candidate list'))
+      }
+    })
+  })
+}
+
 function getCandidates (singleId) {
   return new Promise(function (resolve, reject) {
     models.Users.findOne({
@@ -32,7 +49,7 @@ function getCandidates (singleId) {
   })
 }
 
-function getSeenCandidates (friendId, singleId) {
+function getSeenCandidates (singleId, friendId) {
   return models.Users.findAll({
     attributes: ['id'],
     include: [{
@@ -49,26 +66,28 @@ function getSeenCandidates (friendId, singleId) {
 }
 
 router.get('/:id/friend', function (req, res) {
-  // TODO: check creds
-  // TODO: omit self and omit friends
-  // TODO: add limits
+  // TODO: add match algorithm
+  // TODO: shuffle candidates
 
   var friendId = req.user.userId
   var singleId = req.params.id
 
+  var permission = checkAuth(singleId, friendId)
   var candidates = getCandidates(singleId)
-  var seenCandidates = getSeenCandidates(friendId, singleId)
+  var seenCandidates = getSeenCandidates(singleId, friendId)
 
-  Promise.all([candidates, seenCandidates]).then(([candidates, seenCandidates]) => {
+  Promise.all([permission, candidates, seenCandidates]).then(([permission, candidates, seenCandidates]) => {
     var candidatesList = candidates.map(function (candidate) { return candidate.id })
     var seenCandidatesList = seenCandidates.map(function (candidate) { return candidate.id })
     return models.Users.findAll({
       where: {
         id: {
           $in: candidatesList,
-          $notIn: seenCandidatesList
+          $notIn: seenCandidatesList,
+          $notIn: [singleId, friendId]
         }
-      }
+      },
+      limit: 10
     })
   }).then(candidates => {
     helper.successLog(req.originalUrl, `friend id ${friendId} GET candidates for single id ${singleId}`)
