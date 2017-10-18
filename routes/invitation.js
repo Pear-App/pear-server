@@ -19,7 +19,7 @@ router.post('/', function (req, res) {
     desc: req.body.desc
   }).then(invitation => {
     helper.successLog(req.originalUrl, `Created Invitation with id ${invitation.id} and inviterId ${inviterId}`)
-    return res.json({ invitationId: invitation.id })
+    return res.json(invitation)
   }).catch((e) => {
     helper.errorLog(req.originalUrl, e)
     return res.status(500).send({ message: SERVER_ERROR_MSG })
