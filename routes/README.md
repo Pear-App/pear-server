@@ -11,10 +11,10 @@ headers.append("Authorization", `bearer ${jwtToken}`)
 * **URL Params**: None
 * **Data Params**: `fbToken: 'yourFbAccessToken'`
 * **Require JWT**: `false`
-* **Success Response**: 
+* **Success Response**:
     * **Code**: 200 <br />
       **Content**: `{ jwt : 'yourJwt' }`
-* **Error Response**: 
+* **Error Response**:
     * **Code**: 500 <br />
       **Content**: `{ message: 'An error occurred with processing your request',
       token: null }`
@@ -25,9 +25,9 @@ headers.append("Authorization", `bearer ${jwtToken}`)
 * **URL Params**: `id=[userId]`
 * **Data Params**: None
 * **Require JWT**: `true`
-* **Success Response**: 
+* **Success Response**:
     * **Code**: 200 <br />
-      **Content**: 
+      **Content**:
       ```json
       {
           "id": 1,
@@ -47,12 +47,12 @@ headers.append("Authorization", `bearer ${jwtToken}`)
           "updatedAt": "2017-10-17T09:26:19.000Z"
       }
       ```
-* **Error Response**: 
+* **Error Response**:
     * **Code**: 400 <br />
       **Content**: `{ message: 'Invalid User id' }`
     * **Code**: 500 <br />
       **Content**: `{ message: 'An error occurred with processing your request' }`
-      
+
 ### /user/:id/edit
 * **Method**: `POST`
 * **URL Params**: `id=[userId]`
@@ -70,7 +70,7 @@ headers.append("Authorization", `bearer ${jwtToken}`)
    }
    ```
 * **Require JWT**: `true`
-* **Success Response**: 
+* **Success Response**:
     * **Code**: 200 <br />
       **Content**:
       ```json
@@ -92,7 +92,7 @@ headers.append("Authorization", `bearer ${jwtToken}`)
           "updatedAt": "2017-10-17T09:26:19.000Z"
       }
       ```
-* **Error Response**: 
+* **Error Response**:
     * **Code**: 400 <br />
       **Content**: `{ message: 'Invalid User id' }` / `{ message: 'Unauthorized edit' }`
     * **Code**: 500 <br />
@@ -108,10 +108,10 @@ headers.append("Authorization", `bearer ${jwtToken}`)
    }
    ```
 * **Require JWT**: `true`
-* **Success Response**: 
+* **Success Response**:
     * **Code**: 200 <br />
       **Content**: `{}`
-* **Error Response**: 
+* **Error Response**:
     * **Code**: 500 <br />
       **Content**: `{ message: 'An error occurred with processing your request' }`
 
@@ -125,92 +125,65 @@ headers.append("Authorization", `bearer ${jwtToken}`)
    }
    ```
 * **Require JWT**: `true`
-* **Success Response**: 
+* **Success Response**:
     * **Code**: 200 <br />
       **Content**: `{}`
-* **Error Response**: 
+* **Error Response**:
     * **Code**: 500 <br />
       **Content**: `{ message: 'An error occurred with processing your request' }`
 
-### /user/friend
+### /user/me
 * **Method**: `GET`
 * **URL Params**: None
 * **Data Params**: None
 * **Require JWT**: `true`
-* **Success Response**: 
+* **Success Response**:
     * **Code**: 200 <br />
-      **Content**: 
+      **Content**:
       ```json
       {
-          "id": 1,
+          "id": 3,
           "isSingle": true,
-          "nickname": "Pete",
+          "nickname": "Si Kai",
           "sex": "M",
           "sexualOrientation": "F",
           "age": 22,
           "minAge": 20,
           "maxAge": 30,
           "interests": "[{ name: 'Art', active: false },{ name: 'Books', active: false }]",
-          "desc": "Great guy!",
-          "facebookName": "Peter Pan",
+          "desc": "likes art and books",
+          "facebookName": "Ng Si Kai",
           "facebookId": "123456789",
           "facebookToken": "ABCDEFGHIJ",
-          "createdAt": "2017-10-17T07:38:50.000Z",
-          "updatedAt": "2017-10-17T09:26:19.000Z",
+          "createdAt": "2017-10-18T04:26:46.000Z",
+          "updatedAt": "2017-10-18T15:17:02.000Z",
           "friend": [
-             {
-               "id": 2,
-               "facebookName": "Wonder Woman"
-             },
-             {
-               "id" 3,
-               "facebookName": "Superman"
-             }
-          ]
-      }
-      ```
-* **Error Response**: 
-    * **Code**: 500 <br />
-      **Content**: `{ message: 'An error occurred with processing your request' }`
-
-### /user/single
-* **Method**: `GET`
-* **URL Params**: None
-* **Data Params**: None
-* **Require JWT**: `true`
-* **Success Response**: 
-    * **Code**: 200 <br />
-      **Content**: 
-      ```json
-      {
-          "id": 1,
-          "isSingle": true,
-          "nickname": "Pete",
-          "sex": "M",
-          "sexualOrientation": "F",
-          "age": 22,
-          "minAge": 20,
-          "maxAge": 30,
-          "interests": "[{ name: 'Art', active: false },{ name: 'Books', active: false }]",
-          "desc": "Great guy!",
-          "facebookName": "Peter Pan",
-          "facebookId": "123456789",
-          "facebookToken": "ABCDEFGHIJ",
-          "createdAt": "2017-10-17T07:38:50.000Z",
-          "updatedAt": "2017-10-17T09:26:19.000Z",
+              {
+                  "id": 2,
+                  "facebookName": "Goh Wei Wen",
+                  "facebookId": "123456789"
+              }
+          ],
           "single": [
-             {
-               "id": 2,
-               "facebookName": "Wonder Woman"
-             },
-             {
-               "id" 4,
-               "facebookName": "Aquaman"
-             }
+              {
+                  "id": 1,
+                  "facebookName": "Ana LinJing Chua",
+                  "facebookId": "123456789"
+              },
+              {
+                  "id": 13,
+                  "facebookName": "Karen Albbeegaicdbh Greeneman",
+                  "facebookId": "123456789"
+              },
+              {
+                  "id": 14,
+                  "facebookName": "Karen Albbeiieahfgd Carrieroberg",
+                  "facebookId": "123456789"
+              }
           ]
       }
       ```
-* **Error Response**: 
+* **Error Response**:
     * **Code**: 500 <br />
       **Content**: `{ message: 'An error occurred with processing your request' }`
 
@@ -220,9 +193,9 @@ headers.append("Authorization", `bearer ${jwtToken}`)
 * **URL Params**: `id=[userId]`
 * **Data Params**: None
 * **Require JWT**: `true`
-* **Success Response**: 
+* **Success Response**:
     * **Code**: 200 <br />
-      **Content**: 
+      **Content**:
       ```json
       [
           {
@@ -261,7 +234,7 @@ headers.append("Authorization", `bearer ${jwtToken}`)
           }
       ]
       ```
-* **Error Response**: 
+* **Error Response**:
     * **Code**: 400 <br />
       **Content**: `{ message: 'Invalid User id' }` / `{ message: 'Unauthorized access' }`
     * **Code**: 500 <br />
@@ -278,10 +251,10 @@ headers.append("Authorization", `bearer ${jwtToken}`)
    }
    ```
 * **Require JWT**: `true`
-* **Success Response**: 
+* **Success Response**:
     * **Code**: 200 <br />
       **Content**: `{}`
-* **Error Response**: 
+* **Error Response**:
     * **Code**: 400 <br />
       **Content**: `{ message: 'Unauthorized access' }`
     * **Code**: 500 <br />
@@ -292,9 +265,9 @@ headers.append("Authorization", `bearer ${jwtToken}`)
 * **URL Params**: None
 * **Data Params**: None
 * **Require JWT**: `true`
-* **Success Response**: 
+* **Success Response**:
     * **Code**: 200 <br />
-      **Content**: 
+      **Content**:
       ```json
       [
           {
@@ -333,7 +306,7 @@ headers.append("Authorization", `bearer ${jwtToken}`)
           }
       ]
       ```
-* **Error Response**: 
+* **Error Response**:
     * **Code**: 500 <br />
       **Content**: `{ message: 'An error occurred with processing your request' }`
 
@@ -348,10 +321,10 @@ headers.append("Authorization", `bearer ${jwtToken}`)
    }
    ```
 * **Require JWT**: `true`
-* **Success Response**: 
+* **Success Response**:
     * **Code**: 200 <br />
       **Content**: `{}`
-* **Error Response**: 
+* **Error Response**:
     * **Code**: 500 <br />
       **Content**: `{ message: 'An error occurred with processing your request' }`
 
@@ -361,10 +334,10 @@ headers.append("Authorization", `bearer ${jwtToken}`)
 * **URL Params**: None
 * **Data Params**: `signed_request: 'yourFbDeauthRequest'`
 * **Require JWT**: `false`
-* **Success Response**: 
+* **Success Response**:
     * **Code**: 200 <br />
       **Content**: `{}`
-* **Error Response**: 
+* **Error Response**:
     * **Code**: 500 <br />
       **Content**: `{ message: 'An error occurred with your fb deauthentication' }`
 
