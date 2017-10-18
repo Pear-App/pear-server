@@ -61,9 +61,9 @@ module.exports = function (sequelize, Sequelize) {
     Users.belongsToMany(Users, { through: 'Friendships', as: 'single', foreignKey: 'friend' })
     Users.belongsToMany(Users, { through: 'Friendships', as: 'friend', foreignKey: 'single' })
     Users.hasMany(models.Invitations, { foreignKey: 'inviter' })
-    Users.hasMany(models.Matches, { as: 'asCandidate', foreignKey: 'candidate' })
-    Users.hasMany(models.Matches, { as: 'asSingle', foreignKey: 'single' })
-    Users.hasMany(models.Matches, { as: 'asFriend', foreignKey: 'friend' })
+    Users.hasMany(models.Matches, { as: 'candidates', foreignKey: 'candidate' })
+    Users.hasMany(models.Matches, { as: 'singles', foreignKey: 'single' })
+    Users.hasMany(models.Matches, { as: 'friends', foreignKey: 'friend' })
   }
 
   return Users
