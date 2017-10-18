@@ -327,6 +327,56 @@ headers.append("Authorization", `bearer ${jwtToken}`)
 * **Error Response**:
     * **Code**: 500 <br />
       **Content**: `{ message: 'An error occurred with processing your request' }`
+      
+## Invitation API
+### /invitation
+* **Method**: `POST`
+* **URL Params**: None
+* **Data Params**:
+   ```json
+   {
+      "nickname": "Batman",
+      "sex": "M",
+      "sexualOrientation": "F",
+      "age": "21",
+      "minAge": "18",
+      "maxAge": "21",
+      "interests": "[{ name: 'Bats', active: false },{ name: 'Caves', active: false }]",
+      "desc": "He has a cool Bat Mobile!"
+   }
+   ```
+* **Require JWT**: `true`
+* **Success Response**:
+    * **Code**: 200 <br />
+      **Content**: 
+      ```json
+      {
+          "status": "P",
+          "id": 21,
+          "inviterId": 3,
+          "nickname": "Batman",
+          "sex": "M",
+          "sexualOrientation": "F",
+          "age": "21",
+          "minAge": "18",
+          "maxAge": "21",
+          "interests": "[{ name: 'Bats', active: false },{ name: 'Caves', active: false }]",
+          "desc": "He has a cool Bat Mobile!",
+          "updatedAt": "2017-10-18T17:46:23.482Z",
+          "createdAt": "2017-10-18T17:46:23.482Z"
+      }
+      ```
+* **Error Response**:
+    * **Code**: 500 <br />
+      **Content**: `{ message: 'An error occurred with processing your request' }`
+
+### /invitation/:id
+
+### /invitation/me
+
+### /invitation/:id/accept
+
+### /invitation/:id/reject
 
 # Coming Soon
 ### /deauthenticate
@@ -340,13 +390,3 @@ headers.append("Authorization", `bearer ${jwtToken}`)
 * **Error Response**:
     * **Code**: 500 <br />
       **Content**: `{ message: 'An error occurred with your fb deauthentication' }`
-
-## Invitation API
-### /invitation/create
-
-### /invitation/:id
-
-### /invitation/accept
-
-### /invitation/reject
-
