@@ -26,6 +26,24 @@ router.post('/', function (req, res) {
   })
 })
 
+router.get('/me', function (req, res) {
+  const inviterId = req.user.userId
+  models.Invitations.findAll({
+    where: {
+      inviterId
+    }
+  }).then(invitations => {
+    helper.successLog(req.originalUrl, `GET Invitations created by User id ${inviterId}`)
+    if (!invitations) {
+      return res.json([])
+    }
+    return res.json(invitations)
+  }).catch((e) => {
+    helper.errorLog(req.originalUrl, e)
+    return res.status(500).send({ message: SERVER_ERROR_MSG })
+  })
+})
+
 router.get('/:id', function (req, res) {
   const invitationId = req.params.id
   models.Invitations.findById(invitationId, {
