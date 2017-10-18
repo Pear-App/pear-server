@@ -32,7 +32,10 @@ function getCandidates (singleId) {
           where: {
             isSingle: true,
             sex: user.sexualOrientation,
-            age: { $between: [user.minAge, user.maxAge] }
+            age: { $between: [user.minAge, user.maxAge] },
+            sexualOrientation: user.sex,
+            minAge: { $lte: user.age },
+            maxAge: { $gte: user.age }
           },
           attributes: ['id']
         }).then(candidates => {
@@ -102,10 +105,6 @@ router.get('/:id/friend', function (req, res) {
   })
 })
 
-router.get('/:id/single', function (req, res) {
-  res.json('') // TODO
-})
-
 router.post('/:id/friend', function (req, res) {
   var friendId = req.user.userId
   var singleId = req.params.id
@@ -132,6 +131,10 @@ router.post('/:id/friend', function (req, res) {
       return res.status(500).send({ message: SERVER_ERROR_MSG })
     }
   })
+})
+
+router.get('/:id/single', function (req, res) {
+  res.json('') // TODO
 })
 
 router.post('/:id/single', function (req, res) {
