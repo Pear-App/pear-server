@@ -19,7 +19,25 @@ router.post('/', function (req, res) {
     desc: req.body.desc
   }).then(invitation => {
     helper.successLog(req.originalUrl, `Created Invitation with id ${invitation.id} and inviterId ${inviterId}`)
-    return res.json({ invitationId: invitation.id })
+    return res.json(invitation)
+  }).catch((e) => {
+    helper.errorLog(req.originalUrl, e)
+    return res.status(500).send({ message: SERVER_ERROR_MSG })
+  })
+})
+
+router.get('/me', function (req, res) {
+  const inviterId = req.user.userId
+  models.Invitations.findAll({
+    where: {
+      inviterId
+    }
+  }).then(invitations => {
+    helper.successLog(req.originalUrl, `GET Invitations created by User id ${inviterId}`)
+    if (!invitations) {
+      return res.json([])
+    }
+    return res.json(invitations)
   }).catch((e) => {
     helper.errorLog(req.originalUrl, e)
     return res.status(500).send({ message: SERVER_ERROR_MSG })
