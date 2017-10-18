@@ -198,7 +198,7 @@ headers.append("Authorization", `bearer ${jwtToken}`)
           "facebookToken": "ABCDEFGHIJ",
           "createdAt": "2017-10-17T07:38:50.000Z",
           "updatedAt": "2017-10-17T09:26:19.000Z",
-          "friend": [
+          "single": [
              {
                "id": 2,
                "facebookName": "Wonder Woman"

@@ -9,6 +9,7 @@ router.use('*', passport.authenticate(['jwt'], { session: false }), function (re
 })
 
 router.use('/user', require('./user'))
+router.use('/invitation', require('./invitation'))
 router.use('/match', require('./match'))
 
 module.exports = router
