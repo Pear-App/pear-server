@@ -214,6 +214,147 @@ headers.append("Authorization", `bearer ${jwtToken}`)
     * **Code**: 500 <br />
       **Content**: `{ message: 'An error occurred with processing your request' }`
 
+## Match API
+### /match/friend/:id
+* **Method**: `GET`
+* **URL Params**: `id=[userId]`
+* **Data Params**: None
+* **Require JWT**: `true`
+* **Success Response**: 
+    * **Code**: 200 <br />
+      **Content**: 
+      ```json
+      [
+          {
+              "id": 7,
+              "isSingle": true,
+              "nickname": "A",
+              "sex": "M",
+              "sexualOrientation": "F",
+              "age": 22,
+              "minAge": 20,
+              "maxAge": 30,
+              "interests": "[{ name: 'Art', active: false },{ name: 'Books', active: false }]",
+              "desc": "Cool Boy A",
+              "facebookName": "BoyA",
+              "facebookId": "100",
+              "facebookToken": "123",
+              "createdAt": "2017-10-17T07:38:50.000Z",
+              "updatedAt": "2017-10-17T07:38:50.000Z"
+          },
+          {
+              "id": 8,
+              "isSingle": true,
+              "nickname": "B",
+              "sex": "M",
+              "sexualOrientation": "F",
+              "age": 22,
+              "minAge": 20,
+              "maxAge": 30,
+              "interests": "[{ name: 'Art', active: false },{ name: 'Books', active: false }]",
+              "desc": "Cool Boy B",
+              "facebookName": "BoyB",
+              "facebookId": "101",
+              "facebookToken": "456",
+              "createdAt": "2017-10-17T07:38:50.000Z",
+              "updatedAt": "2017-10-17T07:38:50.000Z"
+          }
+      ]
+      ```
+* **Error Response**: 
+    * **Code**: 400 <br />
+      **Content**: `{ message: 'Invalid User id' }` / `{ message: 'Unauthorized access' }`
+    * **Code**: 500 <br />
+      **Content**: `{ message: 'An error occurred with processing your request' }`
+
+### /match/friend/:id
+* **Method**: `POST`
+* **URL Params**: `id=[userId]`
+* **Data Params**:
+   ```json
+   {
+      "candidateId": 7,
+      "friendChoice": true
+   }
+   ```
+* **Require JWT**: `true`
+* **Success Response**: 
+    * **Code**: 200 <br />
+      **Content**: `{}`
+* **Error Response**: 
+    * **Code**: 400 <br />
+      **Content**: `{ message: 'Unauthorized access' }`
+    * **Code**: 500 <br />
+      **Content**: `{ message: 'An error occurred with processing your request' }`
+
+### /match/single
+* **Method**: `GET`
+* **URL Params**: None
+* **Data Params**: None
+* **Require JWT**: `true`
+* **Success Response**: 
+    * **Code**: 200 <br />
+      **Content**: 
+      ```json
+      [
+          {
+              "id": 7,
+              "isSingle": true,
+              "nickname": "A",
+              "sex": "M",
+              "sexualOrientation": "F",
+              "age": 22,
+              "minAge": 20,
+              "maxAge": 30,
+              "interests": "[{ name: 'Art', active: false },{ name: 'Books', active: false }]",
+              "desc": "Cool Boy A",
+              "facebookName": "BoyA",
+              "facebookId": "100",
+              "facebookToken": "123",
+              "createdAt": "2017-10-17T07:38:50.000Z",
+              "updatedAt": "2017-10-17T07:38:50.000Z"
+          },
+          {
+              "id": 8,
+              "isSingle": true,
+              "nickname": "B",
+              "sex": "M",
+              "sexualOrientation": "F",
+              "age": 22,
+              "minAge": 20,
+              "maxAge": 30,
+              "interests": "[{ name: 'Art', active: false },{ name: 'Books', active: false }]",
+              "desc": "Cool Boy B",
+              "facebookName": "BoyB",
+              "facebookId": "101",
+              "facebookToken": "456",
+              "createdAt": "2017-10-17T07:38:50.000Z",
+              "updatedAt": "2017-10-17T07:38:50.000Z"
+          }
+      ]
+      ```
+* **Error Response**: 
+    * **Code**: 500 <br />
+      **Content**: `{ message: 'An error occurred with processing your request' }`
+
+### /match/single
+* **Method**: `POST`
+* **URL Params**: None
+* **Data Params**:
+   ```json
+   {
+      "candidateId": 7,
+      "singleChoice": false
+   }
+   ```
+* **Require JWT**: `true`
+* **Success Response**: 
+    * **Code**: 200 <br />
+      **Content**: `{}`
+* **Error Response**: 
+    * **Code**: 500 <br />
+      **Content**: `{ message: 'An error occurred with processing your request' }`
+
 # Coming Soon
 ### /deauthenticate
 * **Method**: `POST`
