@@ -65,7 +65,7 @@ router.post('/:id/edit', function (req, res) {
   })
 })
 
-router.post('/friend/add', function (req, res) {
+router.post('/friend', function (req, res) {
   models.Friendships.findOrCreate({
     where: {
       single: req.user.userId,
@@ -80,7 +80,7 @@ router.post('/friend/add', function (req, res) {
   })
 })
 
-router.post('/friend/remove', function (req, res) {
+router.delete('/friend', function (req, res) {
   var singleId = req.user.userId
   var friendId = req.body.friendId
 
