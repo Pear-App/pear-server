@@ -60,7 +60,7 @@ module.exports = function (sequelize, Sequelize) {
   Users.associate = function (models) {
     Users.belongsToMany(Users, { through: 'Friendships', as: 'single', foreignKey: 'friend' })
     Users.belongsToMany(Users, { through: 'Friendships', as: 'friend', foreignKey: 'single' })
-    Users.hasMany(models.Invitations, { as: 'invitations' })
+    Users.hasMany(models.Invitations, { foreignKey: 'inviter' })
     Users.hasMany(models.Matches, { as: 'asCandidate', foreignKey: 'candidate' })
     Users.hasMany(models.Matches, { as: 'asSingle', foreignKey: 'single' })
     Users.hasMany(models.Matches, { as: 'asFriend', foreignKey: 'friend' })
