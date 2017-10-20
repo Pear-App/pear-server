@@ -120,6 +120,17 @@ router.get('/me', function (req, res) {
         as: 'single',
         attributes: ['id', 'facebookName', 'facebookId'],
         through: { attributes: [] }
+      },
+      {
+        model: models.Invitations,
+        as: 'inviter',
+        attributes: {
+          exclude: ['createdAt', 'updatedAt']
+        },
+        where: {
+          status: { $in: ['N', 'P'] }
+        },
+        required: false
       }
     ]
   }).then(user => {

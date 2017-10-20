@@ -30,7 +30,8 @@ router.get('/me', function (req, res) {
   const inviterId = req.user.userId
   models.Invitations.findAll({
     where: {
-      inviterId
+      inviterId,
+      status: { $in: ['N', 'P'] }
     }
   }).then(invitations => {
     helper.successLog(req.originalUrl, `GET Invitations created by User id ${inviterId}`)
