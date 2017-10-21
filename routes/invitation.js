@@ -16,7 +16,6 @@ router.post('/', passport.authenticate(['jwt'], { session: false }), function (r
     age: req.body.age,
     minAge: req.body.minAge,
     maxAge: req.body.maxAge,
-    interests: req.body.interests,
     desc: req.body.desc
   }).then(invitation => {
     helper.successLog(req.originalUrl, `Created Invitation with id ${invitation.id} and inviterId ${inviterId}`)
@@ -153,7 +152,6 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
         age: invitation.age,
         minAge: invitation.minAge,
         maxAge: invitation.maxAge,
-        interests: invitation.interests,
         desc: invitation.desc,
         isSingle: true
       })

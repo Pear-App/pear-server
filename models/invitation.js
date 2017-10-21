@@ -32,10 +32,6 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.INTEGER,
       allowNull: false
     },
-    interests: {
-      type: Sequelize.STRING,
-      allowNull: false
-    },
     desc: {
       type: Sequelize.STRING,
       allowNull: false

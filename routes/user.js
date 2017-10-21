@@ -48,7 +48,6 @@ router.post('/:id/edit', function (req, res) {
         age: req.body.age,
         minAge: req.body.minAge,
         maxAge: req.body.maxAge,
-        interests: req.body.interests,
         desc: req.body.desc
       })
     } else {
