@@ -1,11 +1,12 @@
+var express = require('express')
+var router = express.Router()
+var passport = require('passport')
 var models = require('../models')
 var helper = require('./helper')
 var CustomError = helper.CustomError
 var SERVER_ERROR_MSG = helper.SERVER_ERROR_MSG
-var express = require('express')
-var router = express.Router()
 
-router.post('/', function (req, res) {
+router.post('/', passport.authenticate(['jwt'], { session: false }), function (req, res) {
   const inviterId = req.user.userId
   models.Invitations.create({
     inviterId: inviterId,
@@ -26,7 +27,7 @@ router.post('/', function (req, res) {
   })
 })
 
-router.get('/me', function (req, res) {
+router.get('/me', passport.authenticate(['jwt'], { session: false }), function (req, res) {
   const inviterId = req.user.userId
   models.Invitations.findAll({
     where: {
@@ -91,7 +92,7 @@ function getUserAndInvitation (userId, invitationId) {
 }
 
 // TODO: Make into atomic transaction
-router.post('/:id/accept', function (req, res) {
+router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), function (req, res) {
   const userId = req.user.userId
   const invitationId = req.params.id
   getUserAndInvitation(
@@ -161,7 +162,7 @@ router.post('/:id/accept', function (req, res) {
   })
 })
 
-router.post('/:id/reject', function (req, res) {
+router.post('/:id/reject', passport.authenticate(['jwt'], { session: false }), function (req, res) {
   const invitationId = req.params.id
   models.Invitations.findById(
     invitationId
