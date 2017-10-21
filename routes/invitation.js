@@ -71,6 +71,31 @@ router.get('/:id', function (req, res) {
   })
 })
 
+router.delete('/:id', passport.authenticate(['jwt'], { session: false }), function (req, res) {
+  const invitationId = req.params.id
+  models.Invitations.findById(invitationId).then(invitation => {
+    if (!invitation) {
+      return Promise.reject(new CustomError('InvalidInvitationIdError', `Invalid Invitation id ${invitationId}`, 'Invalid Invitation id'))
+    }
+    if (invitation.inviterId === req.user.userId) {
+      return invitation.destroy()
+    } else {
+      return Promise.reject(new CustomError('UnauthorisedInvitationDeleteError', `User id ${req.user.userId} cannot delete Invitation id ${invitationId}`, 'Unauthorised delete'))
+    }
+  }).then(_ => {
+    helper.successLog(req.originalUrl, `Deleted Invitation with id ${invitationId}`)
+    return res.json({})
+  }).catch((e) => {
+    if (e.name === 'InvalidInvitationIdError' || e.name === 'UnauthorisedInvitationDeleteError') {
+      helper.errorLog(req.originalUrl, e)
+      return res.status(400).send({ message: e.clientMsg })
+    } else {
+      helper.errorLog(req.originalUrl, e)
+      return res.status(500).send({ message: SERVER_ERROR_MSG })
+    }
+  })
+})
+
 /*
   Queries for a single user and invitation
   (userId, invitationId) -> Promise([userObject, invitationObject])
