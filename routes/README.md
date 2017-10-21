@@ -19,6 +19,18 @@ headers.append("Authorization", `bearer ${jwtToken}`)
       **Content**: `{ message: 'An error occurred with processing your request',
       token: null }`
 
+### /deauthenticate
+* **Method**: `POST`
+* **URL Params**: None
+* **Data Params**: `signed_request: 'yourFbDeauthRequest'`
+* **Require JWT**: `false`
+* **Success Response**:
+    * **Code**: 200 <br />
+      **Content**: `{}`
+* **Error Response**:
+    * **Code**: 500 <br />
+      **Content**: `{}`
+
 ## User API
 ### /user/:id
 * **Method**: `GET`
@@ -502,16 +514,3 @@ headers.append("Authorization", `bearer ${jwtToken}`)
       **Content**: `{ message: 'Invalid Invitation id' }`
     * **Code**: 500 <br />
       **Content**: `{ message: 'An error occurred with processing your request' }`
-
-# Coming Soon
-### /deauthenticate
-* **Method**: `POST`
-* **URL Params**: None
-* **Data Params**: `signed_request: 'yourFbDeauthRequest'`
-* **Require JWT**: `false`
-* **Success Response**:
-    * **Code**: 200 <br />
-      **Content**: `{}`
-* **Error Response**:
-    * **Code**: 500 <br />
-      **Content**: `{ message: 'An error occurred with your fb deauthentication' }`
