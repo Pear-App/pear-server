@@ -3,9 +3,9 @@
 module.exports = function (sequelize, Sequelize) {
   var Invitations = sequelize.define('Invitations', {
     id: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
-      autoIncrement: true,
       allowNull: false
     },
     nickname: {
@@ -30,10 +30,6 @@ module.exports = function (sequelize, Sequelize) {
     },
     maxAge: {
       type: Sequelize.INTEGER,
-      allowNull: false
-    },
-    interests: {
-      type: Sequelize.STRING,
       allowNull: false
     },
     desc: {

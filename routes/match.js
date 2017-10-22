@@ -1,9 +1,15 @@
 var express = require('express')
 var router = express.Router()
+var passport = require('passport')
 var models = require('../models')
 var helper = require('./helper')
 var CustomError = helper.CustomError
 var SERVER_ERROR_MSG = helper.SERVER_ERROR_MSG
+var Sequelize = require('sequelize')
+
+router.use('*', passport.authenticate(['jwt'], { session: false }), function (req, res, next) {
+  next()
+})
 
 function checkAuth (singleId, friendId) {
   return new Promise(function (resolve, reject) {
@@ -56,7 +62,6 @@ function getSeenCandidates (singleId, friendId) {
 
 router.get('/friend/:id', function (req, res) {
   // TODO: add match algorithm
-  // TODO: shuffle candidates
 
   var friendId = req.user.userId
   var singleId = req.params.id
@@ -82,6 +87,7 @@ router.get('/friend/:id', function (req, res) {
       attributes: {
         exclude: ['facebookToken', 'minAge', 'maxAge', 'sexualOrientation', 'createdAt', 'updatedAt']
       },
+      order: [[Sequelize.fn('RAND')]],
       limit: 10
     })
   }).then(candidates => {

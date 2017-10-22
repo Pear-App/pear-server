@@ -1,9 +1,14 @@
 var express = require('express')
 var router = express.Router()
+var passport = require('passport')
 var models = require('../models')
 var helper = require('./helper')
 var CustomError = helper.CustomError
 var SERVER_ERROR_MSG = helper.SERVER_ERROR_MSG
+
+router.use('*', passport.authenticate(['jwt'], { session: false }), function (req, res, next) {
+  next()
+})
 
 function checkAuth (singleId, friendId) {
   return new Promise(function (resolve, reject) {
@@ -43,7 +48,6 @@ router.post('/:id/edit', function (req, res) {
         age: req.body.age,
         minAge: req.body.minAge,
         maxAge: req.body.maxAge,
-        interests: req.body.interests,
         desc: req.body.desc
       })
     } else {
@@ -120,6 +124,17 @@ router.get('/me', function (req, res) {
         as: 'single',
         attributes: ['id', 'facebookName', 'facebookId'],
         through: { attributes: [] }
+      },
+      {
+        model: models.Invitations,
+        as: 'inviter',
+        attributes: {
+          exclude: ['createdAt', 'updatedAt']
+        },
+        where: {
+          status: { $in: ['N', 'P'] }
+        },
+        required: false
       }
     ]
   }).then(user => {

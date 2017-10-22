@@ -31,9 +31,6 @@ module.exports = function (sequelize, Sequelize) {
     maxAge: {
       type: Sequelize.INTEGER
     },
-    interests: {
-      type: Sequelize.STRING
-    },
     desc: {
       type: Sequelize.STRING
     },

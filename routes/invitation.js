@@ -1,11 +1,12 @@
+var express = require('express')
+var router = express.Router()
+var passport = require('passport')
 var models = require('../models')
 var helper = require('./helper')
 var CustomError = helper.CustomError
 var SERVER_ERROR_MSG = helper.SERVER_ERROR_MSG
-var express = require('express')
-var router = express.Router()
 
-router.post('/', function (req, res) {
+router.post('/', passport.authenticate(['jwt'], { session: false }), function (req, res) {
   const inviterId = req.user.userId
   models.Invitations.create({
     inviterId: inviterId,
@@ -15,7 +16,6 @@ router.post('/', function (req, res) {
     age: req.body.age,
     minAge: req.body.minAge,
     maxAge: req.body.maxAge,
-    interests: req.body.interests,
     desc: req.body.desc
   }).then(invitation => {
     helper.successLog(req.originalUrl, `Created Invitation with id ${invitation.id} and inviterId ${inviterId}`)
@@ -26,11 +26,12 @@ router.post('/', function (req, res) {
   })
 })
 
-router.get('/me', function (req, res) {
+router.get('/me', passport.authenticate(['jwt'], { session: false }), function (req, res) {
   const inviterId = req.user.userId
   models.Invitations.findAll({
     where: {
-      inviterId
+      inviterId,
+      status: { $in: ['N', 'P'] }
     }
   }).then(invitations => {
     helper.successLog(req.originalUrl, `GET Invitations created by User id ${inviterId}`)
@@ -69,6 +70,31 @@ router.get('/:id', function (req, res) {
   })
 })
 
+router.delete('/:id', passport.authenticate(['jwt'], { session: false }), function (req, res) {
+  const invitationId = req.params.id
+  models.Invitations.findById(invitationId).then(invitation => {
+    if (!invitation) {
+      return Promise.reject(new CustomError('InvalidInvitationIdError', `Invalid Invitation id ${invitationId}`, 'Invalid Invitation id'))
+    }
+    if (invitation.inviterId === req.user.userId) {
+      return invitation.destroy()
+    } else {
+      return Promise.reject(new CustomError('UnauthorisedInvitationDeleteError', `User id ${req.user.userId} cannot delete Invitation id ${invitationId}`, 'Unauthorised delete'))
+    }
+  }).then(_ => {
+    helper.successLog(req.originalUrl, `Deleted Invitation with id ${invitationId}`)
+    return res.json({})
+  }).catch((e) => {
+    if (e.name === 'InvalidInvitationIdError' || e.name === 'UnauthorisedInvitationDeleteError') {
+      helper.errorLog(req.originalUrl, e)
+      return res.status(400).send({ message: e.clientMsg })
+    } else {
+      helper.errorLog(req.originalUrl, e)
+      return res.status(500).send({ message: SERVER_ERROR_MSG })
+    }
+  })
+})
+
 /*
   Queries for a single user and invitation
   (userId, invitationId) -> Promise([userObject, invitationObject])
@@ -90,7 +116,7 @@ function getUserAndInvitation (userId, invitationId) {
 }
 
 // TODO: Make into atomic transaction
-router.post('/:id/accept', function (req, res) {
+router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), function (req, res) {
   const userId = req.user.userId
   const invitationId = req.params.id
   getUserAndInvitation(
@@ -126,7 +152,6 @@ router.post('/:id/accept', function (req, res) {
         age: invitation.age,
         minAge: invitation.minAge,
         maxAge: invitation.maxAge,
-        interests: invitation.interests,
         desc: invitation.desc,
         isSingle: true
       })
@@ -160,7 +185,7 @@ router.post('/:id/accept', function (req, res) {
   })
 })
 
-router.post('/:id/reject', function (req, res) {
+router.post('/:id/reject', passport.authenticate(['jwt'], { session: false }), function (req, res) {
   const invitationId = req.params.id
   models.Invitations.findById(
     invitationId
