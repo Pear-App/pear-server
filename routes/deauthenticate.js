@@ -24,13 +24,15 @@ function parse (signedRequest) {
 }
 
 router.post('/', function (req, res) {
-  parse(req.body.signed_request).then(userId => {
+  parse(req.body.signed_request).then(facebookId => {
     return new Promise(function (resolve, reject) {
-      models.Users.findById(userId).then(user => {
+      models.Users.findOne({
+        where: { facebookId: facebookId }
+      }).then(user => {
         if (user) {
           resolve(user)
         } else {
-          reject(new CustomError('InvalidUserIdError', `Invalid User id ${userId}`, 'Invalid User id'))
+          reject(new CustomError('InvalidFacebookIdError', `Invalid facebookId ${facebookId}`, 'Invalid facebookId'))
         }
       }).catch(e => {
         reject(e)
@@ -49,7 +51,7 @@ router.post('/', function (req, res) {
       return res.send({})
     })
   }).catch(e => {
-    if (e.name === 'InvalidUserIdError' || e.name === 'UnknownAlgorithmError' || e.name === 'BadJSONSigError') {
+    if (e.name === 'InvalidFacebookIdError' || e.name === 'UnknownAlgorithmError' || e.name === 'BadJSONSigError') {
       helper.errorLog(req.originalUrl, e)
       return res.status(400).send({})
     } else {
