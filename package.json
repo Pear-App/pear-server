@@ -16,8 +16,10 @@
   "license": "MIT",
   "dependencies": {
     "babel-cli": "^6.26.0",
+    "base64url": "^2.0.0",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
+    "crypto": "^1.0.1",
     "eslint": "^4.8.0",
     "express": "^4.16.2",
     "jsonwebtoken": "^8.1.0",
