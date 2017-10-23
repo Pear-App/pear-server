@@ -38,6 +38,7 @@ module.exports = function (sequelize, Sequelize) {
   Rooms.associate = function (models) {
     Rooms.belongsTo(models.Users, { as: 'firstSingle' })
     Rooms.belongsTo(models.Users, { as: 'secondSingle' })
+    Rooms.hasMany(models.Messages, { as: 'room' })
   }
 
   return Rooms
