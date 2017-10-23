@@ -182,17 +182,41 @@ router.post('/single', function (req, res) {
   var singleId = req.user.userId
   var candidateId = req.body.candidateId
   var singleChoice = req.body.singleChoice
-
-  models.Matches.findOne({
-    where: {
-      single: singleId,
-      candidate: candidateId
-    }
-  }).then(match => {
-    return match.updateAttributes({
+  Promise.all([
+    models.Matches.findOne({
+      where: {
+        single: singleId,
+        candidate: candidateId
+      }
+    }),
+    models.Matches.findOne({
+      where: {
+        single: candidateId,
+        candidate: singleId
+      }
+    })
+  ]).then(([currentMatch, oppositeMatch]) => {
+    const matchUpdate = currentMatch.updateAttributes({
       singleChoice: singleChoice
     })
-  }).then(match => {
+    console.log(oppositeMatch)
+    if (singleChoice && oppositeMatch && oppositeMatch.singleChoice) {
+      return Promise.all([
+        matchUpdate,
+        models.Rooms.create({
+          firstSingleId: Math.min(singleId, candidateId),
+          secondSingleId: Math.max(singleId, candidateId)
+        })
+      ])
+    }
+    return Promise.all([
+      matchUpdate,
+      null
+    ])
+  }).then(([currentMatch, room]) => {
+    if (room) {
+      helper.successLog(req.originalUrl, `mutual match completed by single id ${singleId} created a room id ${room.id}`)
+    }
     helper.successLog(req.originalUrl, `single id ${singleId} swipes ${singleChoice} to candidate id ${candidateId}`)
     res.json({})
   }).catch(e => {
