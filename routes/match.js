@@ -199,7 +199,6 @@ router.post('/single', function (req, res) {
     const matchUpdate = currentMatch.updateAttributes({
       singleChoice: singleChoice
     })
-    console.log(oppositeMatch)
     if (singleChoice && oppositeMatch && oppositeMatch.singleChoice) {
       return Promise.all([
         matchUpdate,
