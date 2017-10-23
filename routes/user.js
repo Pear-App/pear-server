@@ -135,12 +135,26 @@ router.get('/me', function (req, res) {
           status: { $in: ['N', 'P'] }
         },
         required: false
+      },
+      {
+        model: models.Rooms,
+        as: 'firstSingle'
+      },
+      {
+        model: models.Rooms,
+        as: 'secondSingle'
       }
     ]
   }).then(user => {
     if (user) {
+      // extracting the actual data object from Sequelize model
+      const userData = user.dataValues
+      // merging two room arrays into one
+      userData.rooms = [...userData.firstSingle, ...userData.secondSingle]
+      delete userData.firstSingle
+      delete userData.secondSingle
       helper.successLog(req.originalUrl, `GET friends of User id ${req.user.userId}`)
-      return res.json(user)
+      return res.json(userData)
     } else {
       // should not reach here ever
       return new Promise(function (resolve, reject) {
