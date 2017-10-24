@@ -12,23 +12,19 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.STRING,
       allowNull: false
     },
+    school: {
+      type: Sequelize.STRING,
+      allowNull: false
+    },
+    major: {
+      type: Sequelize.STRING,
+      allowNull: false
+    },
     sex: {
       type: Sequelize.ENUM('M', 'F'),
       allowNull: false
     },
-    sexualOrientation: {
-      type: Sequelize.ENUM('M', 'F', 'B'),
-      allowNull: false
-    },
     age: {
-      type: Sequelize.INTEGER,
-      allowNull: false
-    },
-    minAge: {
-      type: Sequelize.INTEGER,
-      allowNull: false
-    },
-    maxAge: {
       type: Sequelize.INTEGER,
       allowNull: false
     },
