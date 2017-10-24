@@ -88,7 +88,7 @@ Modify user with id
 * **Require JWT**: `true`
 * **Success Response**:
     * **Code**: 200 <br />
-      **Content**:
+      **Content**: Optional fields
       ```json
       {
           "id": 1,
@@ -231,14 +231,14 @@ Fetch user details and the user's friends, singles and invitations where the sta
           "inviter": [
               {
                   "id": "123456789-123456789-123456789",
-                  "status": "P",
-                  "inviterId": 3,
                   "nickname": "Happy Girl 123",
                   "school": "Startup123",
                   "major": "Software Engineer",
                   "sex": "F",
                   "age": 23,
-                  "review": "A Happy Girl"
+                  "review": "A Happy Girl",
+                  "status": "P",
+                  "inviterId": 3
               }
           ]
       }
@@ -361,7 +361,7 @@ As a single, fetch a list of candidates
               "age": 22,
               "desc": "Cool Boy B",
               "facebookName": "BoyB",
-              "facebookId": "101"
+              "facebookId": "101",
               "friend": [
                   {
                       "id": 9,
