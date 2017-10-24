@@ -11,8 +11,6 @@ router.post('/', passport.authenticate(['jwt'], { session: false }), function (r
   models.Invitations.create({
     inviterId: inviterId,
     nickname: req.body.nickname,
-    school: req.body.school,
-    major: req.body.major,
     sex: req.body.sex,
     age: req.body.age,
     review: req.body.review
@@ -147,8 +145,6 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
     if (!user.isSingle) {
       const userUpdate = user.updateAttributes({
         nickname: invitation.nickname,
-        school: invitation.school,
-        major: invitation.major,
         sex: invitation.sex,
         age: invitation.age,
         isSingle: true
