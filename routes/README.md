@@ -115,6 +115,29 @@ Modify user with id
     * **Code**: 500 <br />
       **Content**: `{ message: 'An error occurred with processing your request' }`
 
+### /user/:id/review
+Create or modify review for user with id
+* **Method**: `POST`
+* **URL Params**: `id=[userId]`
+* **Data Params**:
+   ```json
+   {
+      "review": "My New Review",
+   }
+   ```
+* **Require JWT**: `true`
+* **Success Response**:
+    * **Code**: 200 <br />
+      **Content**:
+      ```json
+      {}
+      ```
+* **Error Response**:
+    * **Code**: 400 <br />
+      **Content**: `{ message: 'Invalid User id' }` / `{ message: 'Unauthorized edit' }`
+    * **Code**: 500 <br />
+      **Content**: `{ message: 'An error occurred with processing your request' }`
+
 ### /user/friend
 Add friend with friendId
 * **Method**: `POST`
