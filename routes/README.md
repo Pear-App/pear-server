@@ -212,7 +212,7 @@ Fetch user details and the user's friends, singles and invitations where the sta
                   "major": "Software Engineer",
                   "sex": "F",
                   "age": 23,
-                  "desc": "A Happy Girl"
+                  "review": "A Happy Girl"
               }
           ]
       }
@@ -359,7 +359,7 @@ Create an invitation
       "major": "Bat major",
       "sex": "M",
       "age": "21",
-      "desc": "He has a cool Bat Mobile!"
+      "review": "He has a cool Bat Mobile!"
    }
    ```
 * **Require JWT**: `true`
@@ -376,7 +376,7 @@ Create an invitation
           "major": "Bat Major",
           "sex": "M",
           "age": "21",
-          "desc": "He has a cool Bat Mobile!",
+          "review": "He has a cool Bat Mobile!",
           "updatedAt": "2017-10-18T17:46:23.482Z",
           "createdAt": "2017-10-18T17:46:23.482Z"
       }
@@ -404,7 +404,7 @@ Fetch invitation with id
           "major": "Bat Major",
           "sex": "M",
           "age": "21",
-          "desc": "He has a cool Bat Mobile!",
+          "review": "He has a cool Bat Mobile!",
           "updatedAt": "2017-10-18T17:46:23.482Z",
           "createdAt": "2017-10-18T17:46:23.482Z",
           "inviter": {
@@ -458,7 +458,7 @@ Fetch user's invitations which are either pending or rejected
               "major": "MajorA",
               "sex": "M",
               "age": 21,
-              "desc": "He likes to fish",
+              "review": "He likes to fish",
               "createdAt": "2017-10-18T06:58:28.000Z",
               "updatedAt": "2017-10-18T09:58:05.000Z"
           },
@@ -471,7 +471,7 @@ Fetch user's invitations which are either pending or rejected
               "major": "MajorA",
               "sex": "M",
               "age": 21,
-              "desc": "He likes to fish",
+              "review": "He likes to fish",
               "createdAt": "2017-10-18T06:58:28.000Z",
               "updatedAt": "2017-10-18T09:58:05.000Z"
           },
@@ -484,7 +484,7 @@ Fetch user's invitations which are either pending or rejected
               "major": "MajorA",
               "sex": "M",
               "age": 21,
-              "desc": "He likes to fish",
+              "review": "He likes to fish",
               "createdAt": "2017-10-18T06:58:28.000Z",
               "updatedAt": "2017-10-18T09:58:05.000Z"
           }

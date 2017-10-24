@@ -28,7 +28,7 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.INTEGER,
       allowNull: false
     },
-    desc: {
+    review: {
       type: Sequelize.STRING,
       allowNull: false
     },
