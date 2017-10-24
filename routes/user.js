@@ -43,6 +43,8 @@ router.post('/:id/edit', function (req, res) {
     if (user) {
       return user.updateAttributes({
         nickname: req.body.nickname,
+        school: req.body.school,
+        major: req.body.major,
         sex: req.body.sex,
         sexualOrientation: req.body.sexualOrientation,
         age: req.body.age,
@@ -58,6 +60,39 @@ router.post('/:id/edit', function (req, res) {
   }).then(user => {
     helper.successLog(req.originalUrl, `Edited profile of User id ${singleId}`)
     return res.json(user)
+  }).catch(e => {
+    if (e.name === 'InvalidUserIdError' || e.name === 'InvalidFriendshipIdError') {
+      helper.errorLog(req.originalUrl, e)
+      return res.status(400).send({ message: e.clientMsg })
+    } else {
+      helper.errorLog(req.originalUrl, e)
+      return res.status(500).send({ message: SERVER_ERROR_MSG })
+    }
+  })
+})
+
+router.post('/:id/review', function (req, res) {
+  var singleId = req.params.id
+  var friendId = req.user.userId
+
+  models.Friendships.findOne({
+    where: {
+      single: singleId,
+      friend: friendId
+    }
+  }).then(fs => {
+    if (fs) {
+      return fs.updateAttributes({
+        review: req.body.review
+      })
+    } else {
+      return new Promise(function (resolve, reject) {
+        reject(new CustomError('InvalidFriendshipIdError', `User id ${friendId} not friend of User id ${singleId}`, 'Unauthorized edit'))
+      })
+    }
+  }).then(fs => {
+    helper.successLog(req.originalUrl, `User id ${friendId} edited review of User id ${singleId}`)
+    return res.json({})
   }).catch(e => {
     if (e.name === 'InvalidUserIdError' || e.name === 'InvalidFriendshipIdError') {
       helper.errorLog(req.originalUrl, e)
@@ -117,7 +152,7 @@ router.get('/me', function (req, res) {
         model: models.Users,
         as: 'friend',
         attributes: ['id', 'facebookName', 'facebookId'],
-        through: { attributes: [] }
+        through: { attributes: ['review'] }
       },
       {
         model: models.Users,
@@ -155,7 +190,15 @@ router.get('/me', function (req, res) {
 
 router.get('/:id', function (req, res) {
   models.Users.findOne({
-    where: { id: req.params.id }
+    where: {
+      id: req.params.id
+    },
+    include: [{
+      model: models.Users,
+      as: 'friend',
+      attributes: ['id', 'facebookName', 'facebookId'],
+      through: { attributes: ['review'] }
+    }]
   }).then(user => {
     if (user) {
       helper.successLog(req.originalUrl, `GET User id ${req.params.id}`)

@@ -26,6 +26,9 @@ module.exports = function (sequelize, Sequelize) {
       allowNull: false,
       unique: 'uniqueFriendship'
     },
+    review: {
+      type: Sequelize.STRING
+    },
     createdAt: {
       type: Sequelize.DATE,
       allowNull: false
