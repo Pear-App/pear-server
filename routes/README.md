@@ -45,7 +45,7 @@ Fetch user with id
       {
           "id": 1,
           "isSingle": false,
-          "nickname": "",
+          "nickname": null,
           "school": null,
           "major": null,
           "sex": null,
@@ -406,7 +406,7 @@ Fetch invitation with id
           "age": "21",
           "desc": "He has a cool Bat Mobile!",
           "updatedAt": "2017-10-18T17:46:23.482Z",
-          "createdAt": "2017-10-18T17:46:23.482Z"
+          "createdAt": "2017-10-18T17:46:23.482Z",
           "inviter": {
               "id": 3,
               "facebookName": "Ng Si Kai",
