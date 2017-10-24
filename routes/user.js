@@ -119,7 +119,7 @@ router.get('/me', function (req, res) {
         model: models.Users,
         as: 'friend',
         attributes: ['id', 'facebookName', 'facebookId'],
-        through: { attributes: [] }
+        through: { attributes: ['review'] }
       },
       {
         model: models.Users,
@@ -157,7 +157,15 @@ router.get('/me', function (req, res) {
 
 router.get('/:id', function (req, res) {
   models.Users.findOne({
-    where: { id: req.params.id }
+    where: {
+      id: req.params.id
+    },
+    include: [{
+      model: models.Users,
+      as: 'friend',
+      attributes: ['id', 'facebookName', 'facebookId'],
+      through: { attributes: ['review'] }
+    }]
   }).then(user => {
     if (user) {
       helper.successLog(req.originalUrl, `GET User id ${req.params.id}`)

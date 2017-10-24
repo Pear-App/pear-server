@@ -182,7 +182,10 @@ Fetch user details and the user's friends, singles and invitations where the sta
               {
                   "id": 2,
                   "facebookName": "Goh Wei Wen",
-                  "facebookId": "123456789"
+                  "facebookId": "123456789",
+                  "Friendships": {
+                      "review": "SK IS DA BEST"
+                  }
               }
           ],
           "single": [
@@ -243,7 +246,25 @@ As a friend, fetch a list of candidates for single with id
               "age": 22,
               "desc": "Cool Boy A",
               "facebookName": "BoyA",
-              "facebookId": "100"
+              "facebookId": "100",
+              "friend": [
+                  {
+                      "id": 8,
+                      "facebookName": "BoyB",
+                      "facebookId": "101",
+                      "Friendships": {
+                          "review": "He is a great guy"
+                      }
+                  },
+                  {
+                      "id": 9,
+                      "facebookName": "BoyC",
+                      "facebookId": "102",
+                      "Friendships": {
+                          "review": "He is a really great guy"
+                      }
+                  }
+              ]
           },
           {
               "id": 8,
@@ -255,7 +276,17 @@ As a friend, fetch a list of candidates for single with id
               "age": 22,
               "desc": "Cool Boy B",
               "facebookName": "BoyB",
-              "facebookId": "101"
+              "facebookId": "101",
+              "friend": [
+                  {
+                      "id": 9,
+                      "facebookName": "BoyC",
+                      "facebookId": "102",
+                      "Friendships": {
+                          "review": "He is a great bro"
+                      }
+                  }
+              ]
           }
       ]
       ```
@@ -298,18 +329,6 @@ As a single, fetch a list of candidates
       ```json
       [
           {
-              "id": 7,
-              "isSingle": true,
-              "nickname": "A",
-              "school": "NUH",
-              "major": "Doctor",
-              "sex": "M",
-              "age": 22,
-              "desc": "Cool Boy A",
-              "facebookName": "BoyA",
-              "facebookId": "100"
-          },
-          {
               "id": 8,
               "isSingle": true,
               "nickname": "B",
@@ -320,6 +339,16 @@ As a single, fetch a list of candidates
               "desc": "Cool Boy B",
               "facebookName": "BoyB",
               "facebookId": "101"
+              "friend": [
+                  {
+                      "id": 9,
+                      "facebookName": "BoyC",
+                      "facebookId": "102",
+                      "Friendships": {
+                          "review": "He is a great bro"
+                      }
+                  }
+              ]
           }
       ]
       ```
