@@ -27,8 +27,7 @@ module.exports = function (sequelize, Sequelize) {
       unique: 'uniqueFriendship'
     },
     review: {
-      type: Sequelize.STRING,
-      allowNull: false
+      type: Sequelize.STRING
     },
     createdAt: {
       type: Sequelize.DATE,
