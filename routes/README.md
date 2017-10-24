@@ -46,6 +46,8 @@ Fetch user with id
           "id": 1,
           "isSingle": false,
           "nickname": "",
+          "school": null,
+          "major": null,
           "sex": null,
           "sexualOrientation": null,
           "age": null,
@@ -73,12 +75,14 @@ Modify user with id
    ```json
    {
       "nickname": "Pete",
+      "school": "NUS",
+      "major": "School of Engineering",
       "sex": "M",
       "sexualOrientation": "F",
       "age": 22,
       "minAge": 20,
       "maxAge": 30,
-      "desc": "Great guy!"
+      "desc": "I like sports and games"
    }
    ```
 * **Require JWT**: `true`
@@ -90,12 +94,14 @@ Modify user with id
           "id": 1,
           "isSingle": true,
           "nickname": "Pete",
+          "school": "NUS",
+          "major": "School of Engineering",
           "sex": "M",
           "sexualOrientation": "F",
           "age": 22,
           "minAge": 20,
           "maxAge": 30,
-          "desc": "Great guy!",
+          "desc": "I like sports and games",
           "facebookName": "Peter Pan",
           "facebookId": "123456789",
           "facebookToken": "ABCDEFGHIJ",
@@ -159,12 +165,14 @@ Fetch user details and the user's friends, singles and invitations where the sta
           "id": 3,
           "isSingle": true,
           "nickname": "Si Kai",
+          "school": "NUS",
+          "major": "School of Computing",
           "sex": "M",
           "sexualOrientation": "F",
           "age": 22,
           "minAge": 20,
           "maxAge": 30,
-          "desc": "likes art and books",
+          "desc": "I like dance",
           "facebookName": "Ng Si Kai",
           "facebookId": "123456789",
           "facebookToken": "ABCDEFGHIJ",
@@ -197,15 +205,14 @@ Fetch user details and the user's friends, singles and invitations where the sta
           "inviter": [
               {
                   "id": "123456789-123456789-123456789",
-                  "nickname": "Happy Girl 123",
-                  "sex": "F",
-                  "sexualOrientation": "M",
-                  "age": 23,
-                  "minAge": 20,
-                  "maxAge": 40,
-                  "desc": "A Happy Girl",
                   "status": "P",
-                  "inviterId": 3
+                  "inviterId": 3,
+                  "nickname": "Happy Girl 123",
+                  "school": "Startup123",
+                  "major": "Software Engineer",
+                  "sex": "F",
+                  "age": 23,
+                  "desc": "A Happy Girl"
               }
           ]
       }
@@ -230,33 +237,25 @@ As a friend, fetch a list of candidates for single with id
               "id": 7,
               "isSingle": true,
               "nickname": "A",
+              "school": "NUH",
+              "major": "Doctor",
               "sex": "M",
-              "sexualOrientation": "F",
               "age": 22,
-              "minAge": 20,
-              "maxAge": 30,
               "desc": "Cool Boy A",
               "facebookName": "BoyA",
-              "facebookId": "100",
-              "facebookToken": "123",
-              "createdAt": "2017-10-17T07:38:50.000Z",
-              "updatedAt": "2017-10-17T07:38:50.000Z"
+              "facebookId": "100"
           },
           {
               "id": 8,
               "isSingle": true,
               "nickname": "B",
+              "school": "NUH",
+              "major": "Doctor",
               "sex": "M",
-              "sexualOrientation": "F",
               "age": 22,
-              "minAge": 20,
-              "maxAge": 30,
               "desc": "Cool Boy B",
               "facebookName": "BoyB",
-              "facebookId": "101",
-              "facebookToken": "456",
-              "createdAt": "2017-10-17T07:38:50.000Z",
-              "updatedAt": "2017-10-17T07:38:50.000Z"
+              "facebookId": "101"
           }
       ]
       ```
@@ -302,33 +301,25 @@ As a single, fetch a list of candidates
               "id": 7,
               "isSingle": true,
               "nickname": "A",
+              "school": "NUH",
+              "major": "Doctor",
               "sex": "M",
-              "sexualOrientation": "F",
               "age": 22,
-              "minAge": 20,
-              "maxAge": 30,
               "desc": "Cool Boy A",
               "facebookName": "BoyA",
-              "facebookId": "100",
-              "facebookToken": "123",
-              "createdAt": "2017-10-17T07:38:50.000Z",
-              "updatedAt": "2017-10-17T07:38:50.000Z"
+              "facebookId": "100"
           },
           {
               "id": 8,
               "isSingle": true,
               "nickname": "B",
+              "school": "NUH",
+              "major": "Doctor",
               "sex": "M",
-              "sexualOrientation": "F",
               "age": 22,
-              "minAge": 20,
-              "maxAge": 30,
               "desc": "Cool Boy B",
               "facebookName": "BoyB",
-              "facebookId": "101",
-              "facebookToken": "456",
-              "createdAt": "2017-10-17T07:38:50.000Z",
-              "updatedAt": "2017-10-17T07:38:50.000Z"
+              "facebookId": "101"
           }
       ]
       ```
@@ -364,11 +355,10 @@ Create an invitation
    ```json
    {
       "nickname": "Batman",
+      "school": "Bat School",
+      "major": "Bat major",
       "sex": "M",
-      "sexualOrientation": "F",
       "age": "21",
-      "minAge": "18",
-      "maxAge": "21",
       "desc": "He has a cool Bat Mobile!"
    }
    ```
@@ -378,15 +368,14 @@ Create an invitation
       **Content**: 
       ```json
       {
-          "status": "P",
           "id": "123456789-123456789-123456789",
+          "status": "P",
           "inviterId": 3,
           "nickname": "Batman",
+          "school": "Bat School",
+          "major": "Bat Major",
           "sex": "M",
-          "sexualOrientation": "F",
           "age": "21",
-          "minAge": "18",
-          "maxAge": "21",
           "desc": "He has a cool Bat Mobile!",
           "updatedAt": "2017-10-18T17:46:23.482Z",
           "createdAt": "2017-10-18T17:46:23.482Z"
@@ -408,17 +397,16 @@ Fetch invitation with id
       ```json
       {
           "id": "123456789-123456789-123456789",
-          "nickname": "Puma",
-          "sex": "M",
-          "sexualOrientation": "M",
-          "age": 51,
-          "minAge": 52,
-          "maxAge": 63,
-          "desc": "I like to Run",
-          "status": "Y",
-          "createdAt": "2017-10-18T16:58:54.000Z",
-          "updatedAt": "2017-10-18T17:11:01.000Z",
+          "status": "P",
           "inviterId": 3,
+          "nickname": "Batman",
+          "school": "Bat School",
+          "major": "Bat Major",
+          "sex": "M",
+          "age": "21",
+          "desc": "He has a cool Bat Mobile!",
+          "updatedAt": "2017-10-18T17:46:23.482Z",
+          "createdAt": "2017-10-18T17:46:23.482Z"
           "inviter": {
               "id": 3,
               "facebookName": "Ng Si Kai",
@@ -463,45 +451,42 @@ Fetch user's invitations which are either pending or rejected
       [
           {
               "id": "123456789-123456789-123456789",
+              "status": "P",
+              "inviterId": 3,
               "nickname": "Pig",
+              "school": "SchoolA",
+              "major": "MajorA",
               "sex": "M",
-              "sexualOrientation": "F",
               "age": 21,
-              "minAge": 18,
-              "maxAge": 22,
-              "desc": "I like to fish",
-              "status": "P",
+              "desc": "He likes to fish",
               "createdAt": "2017-10-18T06:58:28.000Z",
-              "updatedAt": "2017-10-18T09:58:05.000Z",
-              "inviterId": 3
+              "updatedAt": "2017-10-18T09:58:05.000Z"
           },
           {
               "id": "123456789-123456789-123456789",
-              "nickname": "Mouse",
-              "sex": "F",
-              "sexualOrientation": "F",
-              "age": 41,
-              "minAge": 48,
-              "maxAge": 52,
-              "desc": "I like to dive",
               "status": "P",
-              "createdAt": "2017-10-18T10:11:01.000Z",
-              "updatedAt": "2017-10-18T10:13:12.000Z",
-              "inviterId": 3
+              "inviterId": 3,
+              "nickname": "Mouse",
+              "school": "SchoolA",
+              "major": "MajorA",
+              "sex": "M",
+              "age": 21,
+              "desc": "He likes to fish",
+              "createdAt": "2017-10-18T06:58:28.000Z",
+              "updatedAt": "2017-10-18T09:58:05.000Z"
           },
           {
               "id": "123456789-123456789-123456789",
+              "status": "P",
+              "inviterId": 3,
               "nickname": "Tiger",
-              "sex": "F",
-              "sexualOrientation": "F",
-              "age": 1,
-              "minAge": 2,
-              "maxAge": 3,
-              "desc": "I like to fly",
-              "status": "N",
-              "createdAt": "2017-10-18T10:34:02.000Z",
-              "updatedAt": "2017-10-18T10:34:09.000Z",
-              "inviterId": 3
+              "school": "SchoolA",
+              "major": "MajorA",
+              "sex": "M",
+              "age": 21,
+              "desc": "He likes to fish",
+              "createdAt": "2017-10-18T06:58:28.000Z",
+              "updatedAt": "2017-10-18T09:58:05.000Z"
           }
       ]
       ```

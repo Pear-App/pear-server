@@ -11,11 +11,10 @@ router.post('/', passport.authenticate(['jwt'], { session: false }), function (r
   models.Invitations.create({
     inviterId: inviterId,
     nickname: req.body.nickname,
+    school: req.body.school,
+    major: req.body.major,
     sex: req.body.sex,
-    sexualOrientation: req.body.sexualOrientation,
     age: req.body.age,
-    minAge: req.body.minAge,
-    maxAge: req.body.maxAge,
     desc: req.body.desc
   }).then(invitation => {
     helper.successLog(req.originalUrl, `Created Invitation with id ${invitation.id} and inviterId ${inviterId}`)
@@ -147,12 +146,11 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
     if (!user.isSingle) {
       const userUpdate = user.updateAttributes({
         nickname: invitation.nickname,
+        school: invitation.school,
+        major: invitation.major,
         sex: invitation.sex,
-        sexualOrientation: invitation.sexualOrientation,
         age: invitation.age,
-        minAge: invitation.minAge,
-        maxAge: invitation.maxAge,
-        desc: invitation.desc,
+        // desc: invitation.desc, // TODO: change to Review
         isSingle: true
       })
       return Promise.all([

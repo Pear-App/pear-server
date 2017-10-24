@@ -43,6 +43,8 @@ router.post('/:id/edit', function (req, res) {
     if (user) {
       return user.updateAttributes({
         nickname: req.body.nickname,
+        school: req.body.school,
+        major: req.body.major,
         sex: req.body.sex,
         sexualOrientation: req.body.sexualOrientation,
         age: req.body.age,
