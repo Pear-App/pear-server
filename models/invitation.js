@@ -12,14 +12,6 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.STRING,
       allowNull: false
     },
-    school: {
-      type: Sequelize.STRING,
-      allowNull: false
-    },
-    major: {
-      type: Sequelize.STRING,
-      allowNull: false
-    },
     sex: {
       type: Sequelize.ENUM('M', 'F'),
       allowNull: false
