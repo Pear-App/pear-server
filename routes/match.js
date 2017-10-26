@@ -87,6 +87,12 @@ router.get('/friend/:id', function (req, res) {
       attributes: {
         exclude: ['facebookToken', 'minAge', 'maxAge', 'sexualOrientation', 'createdAt', 'updatedAt']
       },
+      include: [{
+        model: models.Users,
+        as: 'friend',
+        attributes: ['id', 'facebookName', 'facebookId'],
+        through: { attributes: ['review'] }
+      }],
       order: [[Sequelize.fn('RAND')]],
       limit: 10
     })
@@ -167,6 +173,12 @@ router.get('/single', function (req, res) {
         as: 'candidates',
         required: true,
         attributes: []
+      },
+      {
+        model: models.Users,
+        as: 'friend',
+        attributes: ['id', 'facebookName', 'facebookId'],
+        through: { attributes: ['review'] }
       }]
     })
   }).then(candidates => {

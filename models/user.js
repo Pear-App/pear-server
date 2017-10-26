@@ -16,6 +16,12 @@ module.exports = function (sequelize, Sequelize) {
     nickname: {
       type: Sequelize.STRING
     },
+    school: {
+      type: Sequelize.STRING
+    },
+    major: {
+      type: Sequelize.STRING
+    },
     sex: {
       type: Sequelize.ENUM('M', 'F')
     },

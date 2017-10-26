@@ -11,12 +11,11 @@ router.post('/', passport.authenticate(['jwt'], { session: false }), function (r
   models.Invitations.create({
     inviterId: inviterId,
     nickname: req.body.nickname,
+    school: req.body.school,
+    major: req.body.major,
     sex: req.body.sex,
-    sexualOrientation: req.body.sexualOrientation,
     age: req.body.age,
-    minAge: req.body.minAge,
-    maxAge: req.body.maxAge,
-    desc: req.body.desc
+    review: req.body.review
   }).then(invitation => {
     helper.successLog(req.originalUrl, `Created Invitation with id ${invitation.id} and inviterId ${inviterId}`)
     return res.json(invitation)
@@ -129,7 +128,8 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
     const friendship = models.Friendships.findOrCreate({
       where: {
         single: userId,
-        friend: invitation.inviterId
+        friend: invitation.inviterId,
+        review: invitation.review
       }
     })
     return Promise.all([
@@ -147,12 +147,10 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
     if (!user.isSingle) {
       const userUpdate = user.updateAttributes({
         nickname: invitation.nickname,
+        school: invitation.school,
+        major: invitation.major,
         sex: invitation.sex,
-        sexualOrientation: invitation.sexualOrientation,
         age: invitation.age,
-        minAge: invitation.minAge,
-        maxAge: invitation.maxAge,
-        desc: invitation.desc,
         isSingle: true
       })
       return Promise.all([
