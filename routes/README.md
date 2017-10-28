@@ -175,7 +175,7 @@ Remove friend with friendId
       **Content**: `{ message: 'An error occurred with processing your request' }`
 
 ### /user/me
-Fetch user details and the user's friends, singles and invitations where the status is either pending or rejected
+Fetch user details and the user's friends, singles, invitations where the status is either pending or rejected, reviews and photos
 * **Method**: `GET`
 * **URL Params**: None
 * **Data Params**: None
@@ -238,6 +238,32 @@ Fetch user details and the user's friends, singles and invitations where the sta
                   "status": "P",
                   "inviterId": 3
               }
+          ],
+          "photos": [
+              {
+                  "order": 0,
+                  "photoId": "00000"
+              },
+              {
+                  "order": 1,
+                  "photoId": "11111"
+              },
+              {
+                  "order": 2,
+                  "photoId": "22222"
+              },
+              {
+                  "order": 3,
+                  "photoId": "33333"
+              },
+              {
+                  "order": 4,
+                  "photoId": "44444"
+              },
+              {
+                  "order": 5,
+                  "photoId": "55555"
+              }
           ]
       }
       ```
@@ -285,6 +311,16 @@ As a friend, fetch a list of candidates for single with id
                           "review": "He is a really great guy"
                       }
                   }
+              ],
+              "photos": [
+                  {
+                      "order": 0,
+                      "photoId": "123"
+                  },
+                  {
+                      "order": 1,
+                      "photoId": "456"
+                  }
               ]
           },
           {
@@ -306,6 +342,12 @@ As a friend, fetch a list of candidates for single with id
                       "Friendships": {
                           "review": "He is a great bro"
                       }
+                  }
+              ],
+              "photos": [
+                  {
+                      "order": 0,
+                      "photoId": "789"
                   }
               ]
           }
@@ -368,6 +410,16 @@ As a single, fetch a list of candidates
                       "Friendships": {
                           "review": "He is a great bro"
                       }
+                  }
+              ],
+              "photos": [
+                  {
+                      "order": 0,
+                      "photoId": "123"
+                  },
+                  {
+                      "order": 1,
+                      "photoId": "456"
                   }
               ]
           }
@@ -567,5 +619,56 @@ Reject invitation with id
 * **Error Response**:
     * **Code**: 400 <br />
       **Content**: `{ message: 'Invalid Invitation id' }`
+    * **Code**: 500 <br />
+      **Content**: `{ message: 'An error occurred with processing your request' }`
+
+## Photo API
+### /photo
+Get profile pictures from Facebook
+* **Method**: `GET`
+* **URL Params**: None
+* **Data Params**: None
+* **Require JWT**: `true`
+* **Success Response**:
+    * **Code**: 200 <br />
+      **Content**:
+      ```json
+      [
+          "00000",
+          "11111",
+          "22222",
+          "33333",
+          "44444",
+          "55555",
+          "66666",
+          "77777",
+          "88888",
+          "99999"
+      ]
+      ```
+* **Error Response**:
+    * **Code**: 400 <br />
+      **Content**: `{ message: 'Invalid User id' } / { message: 'No Profile Pictures album' }`
+    * **Code**: 500 <br />
+      **Content**: `{ message: 'An error occurred with processing your request' }`
+
+### /photo
+Modify photos of user. Include up to 6 profile picture ids. Note that the order matters i.e. first id in the list would be assigned order 0, then order 1, order 2...
+* **Method**: `POST`
+* **URL Params**: None
+* **Data Params**:
+   ```json
+   {
+     "photoIds": ["55555","33333","00000","99999","66666","22222"]
+   }
+   ```
+* **Require JWT**: `true`
+* **Success Response**:
+    * **Code**: 200 <br />
+      **Content**:
+      ```json
+      {}
+      ```
+* **Error Response**:
     * **Code**: 500 <br />
       **Content**: `{ message: 'An error occurred with processing your request' }`
