@@ -111,12 +111,21 @@ router.get('/friend/:id', function (req, res) {
       attributes: {
         exclude: ['facebookToken', 'minAge', 'maxAge', 'sexualOrientation', 'createdAt', 'updatedAt']
       },
-      include: [{
-        model: models.Users,
-        as: 'friend',
-        attributes: ['id', 'facebookName', 'facebookId'],
-        through: { attributes: ['review'] }
-      }],
+      include: [
+        {
+          model: models.Users,
+          as: 'friend',
+          attributes: ['id', 'facebookName', 'facebookId'],
+          through: { attributes: ['review'] }
+        },
+        {
+          model: models.Photos,
+          as: 'photos',
+          attributes: {
+            exclude: ['id', 'ownerId', 'createdAt', 'updatedAt']
+          }
+        }
+      ],
       order: [[Sequelize.fn('RAND')]],
       limit: 10
     })
@@ -187,23 +196,32 @@ router.get('/single', function (req, res) {
       attributes: {
         exclude: ['facebookToken', 'minAge', 'maxAge', 'sexualOrientation', 'createdAt', 'updatedAt']
       },
-      include: [{
-        model: models.Matches,
-        where: {
-          single: singleId,
-          friendChoice: true,
-          singleChoice: null
+      include: [
+        {
+          model: models.Matches,
+          where: {
+            single: singleId,
+            friendChoice: true,
+            singleChoice: null
+          },
+          as: 'candidates',
+          required: true,
+          attributes: []
         },
-        as: 'candidates',
-        required: true,
-        attributes: []
-      },
-      {
-        model: models.Users,
-        as: 'friend',
-        attributes: ['id', 'facebookName', 'facebookId'],
-        through: { attributes: ['review'] }
-      }]
+        {
+          model: models.Users,
+          as: 'friend',
+          attributes: ['id', 'facebookName', 'facebookId'],
+          through: { attributes: ['review'] }
+        },
+        {
+          model: models.Photos,
+          as: 'photos',
+          attributes: {
+            exclude: ['id', 'ownerId', 'createdAt', 'updatedAt']
+          }
+        }
+      ]
     })
   }).then(candidates => {
     helper.successLog(req.originalUrl, `single id ${singleId} gets candidates`)

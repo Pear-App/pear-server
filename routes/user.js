@@ -178,6 +178,13 @@ router.get('/me', function (req, res) {
       {
         model: models.Rooms,
         as: 'secondSingle'
+      },
+      {
+        model: models.Photos,
+        as: 'photos',
+        attributes: {
+          exclude: ['id', 'ownerId', 'createdAt', 'updatedAt']
+        }
       }
     ]
   }).then(user => {
