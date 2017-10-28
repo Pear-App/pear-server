@@ -5,21 +5,29 @@ var models = require('../models')
 var helper = require('./helper')
 var CustomError = helper.CustomError
 var SERVER_ERROR_MSG = helper.SERVER_ERROR_MSG
+var checkAge = helper.checkAge
 
 router.post('/', passport.authenticate(['jwt'], { session: false }), function (req, res) {
   const inviterId = req.user.userId
-  models.Invitations.create({
-    inviterId: inviterId,
-    nickname: req.body.nickname,
-    sex: req.body.sex,
-    age: req.body.age,
-    review: req.body.review
+  checkAge(req.body.age).then(_ => {
+    return models.Invitations.create({
+      inviterId: inviterId,
+      nickname: req.body.nickname,
+      sex: req.body.sex,
+      age: req.body.age,
+      review: req.body.review
+    })
   }).then(invitation => {
     helper.successLog(req.originalUrl, `Created Invitation with id ${invitation.id} and inviterId ${inviterId}`)
     return res.json(invitation)
   }).catch((e) => {
-    helper.errorLog(req.originalUrl, e)
-    return res.status(500).send({ message: SERVER_ERROR_MSG })
+    if (e.name === 'InvalidAge') {
+      helper.errorLog(req.originalUrl, e)
+      return res.status(400).send({ message: e.clientMsg })
+    } else {
+      helper.errorLog(req.originalUrl, e)
+      return res.status(500).send({ message: SERVER_ERROR_MSG })
+    }
   })
 })
 

@@ -86,7 +86,7 @@ function addPhoto (userId, photoId, order) {
 
 router.post('/', function (req, res) {
   var userId = req.user.userId
-  var photoIds = req.body.photoIds.slice(0,6)
+  var photoIds = req.body.photoIds.slice(0, 6)
 
   models.sequelize.transaction(function (t) {
     var promises = []
