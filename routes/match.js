@@ -62,7 +62,7 @@ function getSeenCandidates (singleId, friendId) {
 
 function getSex (user) {
   return new Promise(function (resolve, reject) {
-    if (user.sexualOrientation == 'B') {
+    if (user.sexualOrientation === 'B') {
       resolve(['M', 'F'])
     } else {
       resolve([user.sexualOrientation])
@@ -72,7 +72,7 @@ function getSex (user) {
 
 function getSexualOrientation (user) {
   return new Promise(function (resolve, reject) {
-    if (user.sexualOrientation == 'B') {
+    if (user.sexualOrientation === 'B') {
       resolve([user.sexualOrientation])
     } else {
       resolve([user.sex])
