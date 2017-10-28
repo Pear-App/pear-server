@@ -46,7 +46,7 @@ router.get('/', function (req, res) {
       return value.id
     })
     helper.successLog(req.originalUrl, `GET profile pictures of User ${userId} from Facebook`)
-    res.send(photoIds)
+    return res.send(photoIds)
   }).catch(e => {
     if (e.name === 'InvalidUserIdError' || e.name === 'NoProfilePicturesAlbum') {
       helper.errorLog(req.originalUrl, e)
@@ -55,6 +55,52 @@ router.get('/', function (req, res) {
       helper.errorLog(req.originalUrl, e)
       return res.status(500).send({ message: SERVER_ERROR_MSG })
     }
+  })
+})
+
+function addPhoto (userId, photoId, order) {
+  return new Promise(function (resolve, reject) {
+    models.Photos.findOrCreate({
+      where: {
+        ownerId: userId,
+        order: order
+      },
+      defaults: {
+        photoId: photoId
+      }
+    }).then(photo => {
+      if (!photo[1]) { // is found
+        return photo[0].updateAttributes({
+          photoId: photoId
+        })
+      } else { // is created
+        resolve()
+      }
+    }).then(_ => {
+      resolve()
+    }).catch(e => {
+      reject(e)
+    })
+  })
+}
+
+router.post('/', function (req, res) {
+  var userId = req.user.userId
+  var photoIds = req.body.photoIds
+
+  models.sequelize.transaction(function (t) {
+    var promises = []
+    photoIds.forEach(function (photoId, order) {
+      var promise = addPhoto(userId, photoId, order)
+      promises.push(promise)
+    })
+    return Promise.all(promises)
+  }).then(_ => {
+    helper.successLog(req.originalUrl, `Updated photos of User ${userId}`)
+    return res.send({})
+  }).catch(e => {
+    helper.errorLog(req.originalUrl, e)
+    return res.status(500).send({ message: SERVER_ERROR_MSG })
   })
 })
 

@@ -69,6 +69,7 @@ module.exports = function (sequelize, Sequelize) {
     Users.hasMany(models.Matches, { as: 'friends', foreignKey: 'friend' })
     Users.hasMany(models.Rooms, { as: 'firstSingle', foreignKey: 'firstSingleId' })
     Users.hasMany(models.Rooms, { as: 'secondSingle', foreignKey: 'secondSingleId' })
+    Users.hasMany(models.Photos, { as: 'photos', foreignKey: 'ownerId' })
   }
 
   return Users
