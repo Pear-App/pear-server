@@ -67,8 +67,8 @@ module.exports = function (sequelize, Sequelize) {
     Users.hasMany(models.Matches, { as: 'candidates', foreignKey: 'candidate' })
     Users.hasMany(models.Matches, { as: 'singles', foreignKey: 'single' })
     Users.hasMany(models.Matches, { as: 'friends', foreignKey: 'friend' })
-    Users.hasMany(models.Rooms, { as: 'firstSingle', foreignKey: 'firstSingleId' })
-    Users.hasMany(models.Rooms, { as: 'secondSingle', foreignKey: 'secondSingleId' })
+    Users.hasMany(models.Rooms, { as: 'firstPerson', foreignKey: 'firstPersonId' })
+    Users.hasMany(models.Rooms, { as: 'secondPerson', foreignKey: 'secondPersonId' })
     Users.hasMany(models.Messages, { as: 'owner', foreignKey: 'ownerId' })
   }
 

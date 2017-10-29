@@ -8,8 +8,8 @@ module.exports = function (sequelize, Sequelize) {
       autoIncrement: true,
       allowNull: false
     },
-    // First single will have smaller id
-    firstSingleId: {
+    // First person will have smaller id
+    firstPersonId: {
       type: Sequelize.INTEGER,
       references: {
         model: 'Users',
@@ -18,8 +18,8 @@ module.exports = function (sequelize, Sequelize) {
       allowNull: false,
       unique: 'uniqueRoom'
     },
-    // Second single will have larger id
-    secondSingleId: {
+    // Second person will have larger id
+    secondPersonId: {
       type: Sequelize.INTEGER,
       references: {
         model: 'Users',
@@ -27,6 +27,10 @@ module.exports = function (sequelize, Sequelize) {
       },
       allowNull: false,
       unique: 'uniqueRoom'
+    },
+    isMatch: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false
     },
     createdAt: {
       type: Sequelize.DATE,
@@ -36,8 +40,8 @@ module.exports = function (sequelize, Sequelize) {
   })
 
   Rooms.associate = function (models) {
-    Rooms.belongsTo(models.Users, { as: 'firstSingle' })
-    Rooms.belongsTo(models.Users, { as: 'secondSingle' })
+    Rooms.belongsTo(models.Users, { as: 'firstPerson' })
+    Rooms.belongsTo(models.Users, { as: 'secondPerson' })
     Rooms.hasMany(models.Messages, { as: 'room' })
   }
 
