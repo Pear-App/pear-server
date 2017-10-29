@@ -51,33 +51,32 @@ router.post('/', (req, res) => {
   }).then((newFbToken) => {
     return Promise.all([getFBUser(newFbToken), Promise.resolve(newFbToken)])
   }).then((userAndToken) => {
-    const user = userAndToken[0]
+    const facebookUser = userAndToken[0]
     const facebookToken = userAndToken[1]
 
-    const facebookId = user.id
-    const facebookName = user.name
+    const facebookId = facebookUser.id
+    const facebookName = facebookUser.name
 
-    return new Promise(function (resolve, reject) {
-      models.Users.findOne({
-        where: { facebookId: facebookId }
-      }).then(user => {
-        if (user) {
-          return user.updateAttributes({
-            facebookToken
-          })
-        } else {
-          return models.Users.create({
-            facebookId,
-            facebookName,
-            facebookToken
-          })
-        }
-      })
+    var user = models.Users.findOne({
+      where: { facebookId: facebookId }
     })
+    return Promise.all([user, facebookId, facebookName, facebookToken])
+  }).then(([user, facebookId, facebookName, facebookToken]) => {
+    if (user) {
+      return user.updateAttributes({
+        facebookToken
+      })
+    } else {
+      return models.Users.create({
+        facebookId,
+        facebookName,
+        facebookToken
+      })
+    }
   }).then((user) => {
     const payload = {
       user: {
-        userId: user[0].id
+        userId: user.id
       }
     }
     const jwt = generateUserToken(payload)
