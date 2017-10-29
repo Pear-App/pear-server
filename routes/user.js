@@ -113,14 +113,28 @@ router.post('/:id/review', function (req, res) {
   })
 })
 
+// TODO: Make into atomic transaction
 router.post('/friend', function (req, res) {
+  const userId = req.user.userId
+  const friendId = req.body.friendId
   models.Friendships.findOrCreate({
     where: {
-      single: req.user.userId,
-      friend: req.body.friendId
+      single: userId,
+      friend: friendId
     }
   }).then(fs => {
     helper.successLog(req.originalUrl, `Created Friendship where single id ${fs[0].single} and friend id ${fs[0].friend}`)
+    return models.Rooms.findOrCreate({
+      where: {
+        firstPersonId: Math.min(userId, friendId),
+        secondPersonId: Math.max(userId, friendId),
+        isMatch: false
+      }
+    })
+  }).then(room => {
+    if (room) {
+      helper.successLog(req.originalUrl, `New friendship found or created a room id ${room.id}`)
+    }
     return res.json({})
   }).catch(e => {
     helper.errorLog(req.originalUrl, e)
@@ -182,11 +196,11 @@ router.get('/me', function (req, res) {
       },
       {
         model: models.Rooms,
-        as: 'firstSingle'
+        as: 'firstPerson'
       },
       {
         model: models.Rooms,
-        as: 'secondSingle'
+        as: 'secondPerson'
       },
       {
         model: models.Photos,
@@ -201,9 +215,9 @@ router.get('/me', function (req, res) {
       // extracting the actual data object from Sequelize model
       const userData = user.dataValues
       // merging two room arrays into one
-      userData.rooms = [...userData.firstSingle, ...userData.secondSingle]
-      delete userData.firstSingle
-      delete userData.secondSingle
+      userData.rooms = [...userData.firstPerson, ...userData.secondPerson]
+      delete userData.firstPerson
+      delete userData.secondPerson
       helper.successLog(req.originalUrl, `GET friends of User id ${req.user.userId}`)
       return res.json(userData)
     } else {

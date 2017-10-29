@@ -6,6 +6,7 @@ router.use('/deauthenticate', require('./deauthenticate'))
 router.use('/user', require('./user'))
 router.use('/invitation', require('./invitation'))
 router.use('/match', require('./match'))
+router.use('/room', require('./room'))
 router.use('/photo', require('./photo'))
 
 module.exports = router

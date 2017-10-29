@@ -28,18 +28,24 @@ passport.use(new passportJwt.Strategy(passportJWTOptions, (jwtPayload, done) => 
 
 app.use('/api', require('./routes/index'))
 
-if (process.env.NODE_ENV === 'production') {
-  var server = app.listen(3000, function () {
-    var host = server.address().address
-    var port = server.address().port
-    console.log('Pear listening at https://%s:%s', host, port)
+var server = app.listen(3000, function () {
+  var port = server.address().port
+  console.log(`Pear API Server listening at port ${port}`)
+})
+
+const io = require('socket.io')(server)
+
+io.on('connect', function (socket) {
+  socket.on('subscribe', (roomIds) => {
+    roomIds.forEach((roomId) => {
+      socket.join(roomId)
+    })
   })
-} else {
-  var devServer = app.listen(3000, '127.0.0.1', function () {
-    var host = devServer.address().address
-    var port = devServer.address().port
-    console.log('Pear listening at https://%s:%s', host, port)
+  socket.on('unsubscribe', (roomIds) => {
+    roomIds.forEach((roomId) => {
+      socket.leave(roomId)
+    })
   })
-}
+})
 
 module.exports = app

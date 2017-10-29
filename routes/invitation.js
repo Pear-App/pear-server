@@ -144,8 +144,14 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
       friendship
     ])
   }).then(([user, invitation, friendship]) => {
+    let roomCreation = Promise.resolve(false)
     if (friendship) {
       helper.successLog(req.originalUrl, `Created Friendship where single id ${friendship[0].single} and friend id ${friendship[0].friend}`)
+      roomCreation = models.Rooms.create({
+        firstPersonId: Math.min(friendship[0].single, friendship[0].friend),
+        secondPersonId: Math.max(friendship[0].single, friendship[0].friend),
+        isMatch: false
+      })
     }
     const invitationUpdate = invitation.updateAttributes({
       status: 'Y'
@@ -159,14 +165,16 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
       })
       return Promise.all([
         invitationUpdate,
-        userUpdate
+        userUpdate,
+        roomCreation
       ])
     }
     return Promise.all([
       invitationUpdate,
-      Promise.resolve('Already Single')
+      Promise.resolve('Already Single'),
+      roomCreation
     ])
-  }).then(([invitationUpdate, userUpdate]) => {
+  }).then(([invitationUpdate, userUpdate, roomCreation]) => {
     if (invitationUpdate) {
       helper.successLog(req.originalUrl, `Updated invitation status of Invitation id ${invitationUpdate.id} to Accepted`)
     }
@@ -174,6 +182,9 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
       helper.successLog(req.originalUrl, `No update to profile of User id ${userUpdate.id} who is already a Single`)
     } else if (userUpdate) {
       helper.successLog(req.originalUrl, `Updated profile of User id ${userUpdate.id}`)
+    }
+    if (roomCreation) {
+      helper.successLog(req.originalUrl, `New friendship found or created a room id ${roomCreation.id}`)
     }
     return res.json({})
   }).catch((e) => {
