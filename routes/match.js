@@ -215,8 +215,9 @@ router.post('/single', function (req, res) {
       return Promise.all([
         matchUpdate,
         models.Rooms.create({
-          firstSingleId: Math.min(singleId, candidateId),
-          secondSingleId: Math.max(singleId, candidateId)
+          firstPersonId: Math.min(singleId, candidateId),
+          secondPersonId: Math.max(singleId, candidateId),
+          isMatch: true
         })
       ])
     }

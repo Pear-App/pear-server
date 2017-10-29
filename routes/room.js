@@ -11,8 +11,8 @@ function checkAuthAndFindRoom (userId, roomId) {
     models.Rooms.findOne({
       where: {
         $or: [
-          { firstSingleId: userId },
-          { secondSingleId: userId }
+          { firstPersonId: userId },
+          { secondPersonId: userId }
         ]
       }
     }).then(room => {
