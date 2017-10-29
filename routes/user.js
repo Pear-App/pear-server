@@ -196,11 +196,27 @@ router.get('/me', function (req, res) {
       },
       {
         model: models.Rooms,
-        as: 'firstPerson'
+        as: 'firstPerson',
+        attributes: ['id', 'isMatch'],
+        include: [
+          {
+            model: models.Users,
+            as: 'secondPerson',
+            attributes: ['id', 'facebookName', 'facebookId']
+          }
+        ]
       },
       {
         model: models.Rooms,
-        as: 'secondPerson'
+        as: 'secondPerson',
+        attributes: ['id', 'isMatch'],
+        include: [
+          {
+            model: models.Users,
+            as: 'firstPerson',
+            attributes: ['id', 'facebookName', 'facebookId']
+          }
+        ]
       },
       {
         model: models.Photos,
@@ -216,6 +232,19 @@ router.get('/me', function (req, res) {
       const userData = user.dataValues
       // merging two room arrays into one
       userData.rooms = [...userData.firstPerson, ...userData.secondPerson]
+      // renaming room person data to a single otherPerson for sanity
+      userData.rooms = userData.rooms.map((room) => {
+        let newRoom = {
+          id: room.id,
+          isMatch: room.isMatch
+        }
+        if (room.firstPerson) {
+          newRoom.otherPerson = room.firstPerson
+        } else {
+          newRoom.otherPerson = room.secondPerson
+        }
+        return newRoom
+      })
       delete userData.firstPerson
       delete userData.secondPerson
       helper.successLog(req.originalUrl, `GET friends of User id ${req.user.userId}`)
