@@ -29,7 +29,8 @@
     "passport": "^0.4.0",
     "passport-jwt": "^3.0.0",
     "sequelize": "^4.13.15",
-    "sequelize-cli": "^3.0.0"
+    "sequelize-cli": "^3.0.0",
+    "socket.io": "^2.0.4"
   },
   "devDependencies": {
     "eslint-config-standard": "^10.2.1",
