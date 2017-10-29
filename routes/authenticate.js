@@ -56,14 +56,23 @@ router.post('/', (req, res) => {
 
     const facebookId = user.id
     const facebookName = user.name
-    return models.Users.findOrCreate({
-      where: {
-        facebookId
-      },
-      defaults: {
-        facebookName,
-        facebookToken
-      }
+
+    return new Promise(function (resolve, reject) {
+      models.Users.findOne({
+        where: { facebookId: facebookId }
+      }).then(user => {
+        if (user) {
+          return user.updateAttributes({
+            facebookToken
+          })
+        } else {
+          return models.Users.create({
+            facebookId,
+            facebookName,
+            facebookToken
+          })
+        }
+      })
     })
   }).then((user) => {
     const payload = {

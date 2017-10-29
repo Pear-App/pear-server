@@ -60,6 +60,26 @@ function getSeenCandidates (singleId, friendId) {
   })
 }
 
+function getSex (user) {
+  return new Promise(function (resolve, reject) {
+    if (user.sexualOrientation === 'B') {
+      resolve(['M', 'F'])
+    } else {
+      resolve([user.sexualOrientation])
+    }
+  })
+}
+
+function getSexualOrientation (user) {
+  return new Promise(function (resolve, reject) {
+    if (user.sexualOrientation === 'B') {
+      resolve([user.sexualOrientation])
+    } else {
+      resolve([user.sex])
+    }
+  })
+}
+
 router.get('/friend/:id', function (req, res) {
   // TODO: add match algorithm
 
@@ -72,27 +92,40 @@ router.get('/friend/:id', function (req, res) {
 
   Promise.all([permission, user, seenCandidates]).then(([permission, user, seenCandidates]) => {
     var seenCandidatesList = seenCandidates.map(function (candidate) { return candidate.id })
+    var sex = getSex(user)
+    var sexualOrientation = getSexualOrientation(user)
+    return Promise.all([user, seenCandidatesList, sex, sexualOrientation])
+  }).then(([user, seenCandidatesList, sex, sexualOrientation]) => {
     return models.Users.findAll({
       where: {
         id: {
           $notIn: seenCandidatesList.concat([singleId, friendId])
         },
         isSingle: true,
-        sex: user.sexualOrientation,
+        sex: { $in: sex },
         age: { $between: [user.minAge, user.maxAge] },
-        sexualOrientation: user.sex,
+        sexualOrientation: { $in: sexualOrientation },
         minAge: { $lte: user.age },
         maxAge: { $gte: user.age }
       },
       attributes: {
         exclude: ['facebookToken', 'minAge', 'maxAge', 'sexualOrientation', 'createdAt', 'updatedAt']
       },
-      include: [{
-        model: models.Users,
-        as: 'friend',
-        attributes: ['id', 'facebookName', 'facebookId'],
-        through: { attributes: ['review'] }
-      }],
+      include: [
+        {
+          model: models.Users,
+          as: 'friend',
+          attributes: ['id', 'facebookName', 'facebookId'],
+          through: { attributes: ['review'] }
+        },
+        {
+          model: models.Photos,
+          as: 'photos',
+          attributes: {
+            exclude: ['id', 'ownerId', 'createdAt', 'updatedAt']
+          }
+        }
+      ],
       order: [[Sequelize.fn('RAND')]],
       limit: 10
     })
@@ -163,23 +196,32 @@ router.get('/single', function (req, res) {
       attributes: {
         exclude: ['facebookToken', 'minAge', 'maxAge', 'sexualOrientation', 'createdAt', 'updatedAt']
       },
-      include: [{
-        model: models.Matches,
-        where: {
-          single: singleId,
-          friendChoice: true,
-          singleChoice: null
+      include: [
+        {
+          model: models.Matches,
+          where: {
+            single: singleId,
+            friendChoice: true,
+            singleChoice: null
+          },
+          as: 'candidates',
+          required: true,
+          attributes: []
         },
-        as: 'candidates',
-        required: true,
-        attributes: []
-      },
-      {
-        model: models.Users,
-        as: 'friend',
-        attributes: ['id', 'facebookName', 'facebookId'],
-        through: { attributes: ['review'] }
-      }]
+        {
+          model: models.Users,
+          as: 'friend',
+          attributes: ['id', 'facebookName', 'facebookId'],
+          through: { attributes: ['review'] }
+        },
+        {
+          model: models.Photos,
+          as: 'photos',
+          attributes: {
+            exclude: ['id', 'ownerId', 'createdAt', 'updatedAt']
+          }
+        }
+      ]
     })
   }).then(candidates => {
     helper.successLog(req.originalUrl, `single id ${singleId} gets candidates`)

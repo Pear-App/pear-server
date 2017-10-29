@@ -5,6 +5,8 @@ var models = require('../models')
 var helper = require('./helper')
 var CustomError = helper.CustomError
 var SERVER_ERROR_MSG = helper.SERVER_ERROR_MSG
+var checkAge = helper.checkAge
+var checkAgeRange = helper.checkAgeRange
 
 router.use('*', passport.authenticate(['jwt'], { session: false }), function (req, res, next) {
   next()
@@ -34,8 +36,15 @@ function checkAuth (singleId, friendId) {
 router.post('/:id/edit', function (req, res) {
   var singleId = req.params.id
   var friendId = req.user.userId
+  var age = req.body.age
+  var minAge = req.body.minAge
+  var maxAge = req.body.maxAge
 
-  checkAuth(singleId, friendId).then(_ => {
+  checkAge(age, minAge, maxAge).then(_ => {
+    return checkAgeRange(minAge, maxAge)
+  }).then(_ => {
+    return checkAuth(singleId, friendId)
+  }).then(_ => {
     return models.Users.findOne({
       where: { id: singleId }
     })
@@ -47,9 +56,9 @@ router.post('/:id/edit', function (req, res) {
         major: req.body.major,
         sex: req.body.sex,
         sexualOrientation: req.body.sexualOrientation,
-        age: req.body.age,
-        minAge: req.body.minAge,
-        maxAge: req.body.maxAge,
+        age: age,
+        minAge: minAge,
+        maxAge: maxAge,
         desc: req.body.desc
       })
     } else {
@@ -61,7 +70,7 @@ router.post('/:id/edit', function (req, res) {
     helper.successLog(req.originalUrl, `Edited profile of User id ${singleId}`)
     return res.json(user)
   }).catch(e => {
-    if (e.name === 'InvalidUserIdError' || e.name === 'InvalidFriendshipIdError') {
+    if (e.name === 'InvalidUserIdError' || e.name === 'InvalidFriendshipIdError' || e.name === 'InvalidAge' || e.name === 'InvalidAgeRange') {
       helper.errorLog(req.originalUrl, e)
       return res.status(400).send({ message: e.clientMsg })
     } else {
@@ -192,6 +201,13 @@ router.get('/me', function (req, res) {
       {
         model: models.Rooms,
         as: 'secondPerson'
+      },
+      {
+        model: models.Photos,
+        as: 'photos',
+        attributes: {
+          exclude: ['id', 'ownerId', 'createdAt', 'updatedAt']
+        }
       }
     ]
   }).then(user => {

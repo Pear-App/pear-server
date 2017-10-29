@@ -70,6 +70,7 @@ module.exports = function (sequelize, Sequelize) {
     Users.hasMany(models.Rooms, { as: 'firstPerson', foreignKey: 'firstPersonId' })
     Users.hasMany(models.Rooms, { as: 'secondPerson', foreignKey: 'secondPersonId' })
     Users.hasMany(models.Messages, { as: 'owner', foreignKey: 'ownerId' })
+    Users.hasMany(models.Photos, { as: 'photos', foreignKey: 'ownerId' })
   }
 
   return Users
