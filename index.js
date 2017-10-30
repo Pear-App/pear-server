@@ -26,6 +26,15 @@ passport.use(new passportJwt.Strategy(passportJWTOptions, (jwtPayload, done) => 
 }))
 /* END Authentication Configuration END */
 
+/* START AWS Configuration START */
+const AWS = require('aws-sdk')
+AWS.config.update({
+  accessKeyId: process.env.PEAR_AWS_ACCESS_KEY,
+  secretAccessKey: process.env.PEAR_AWS_SECRET
+})
+app.set('s3', new AWS.S3())
+/* END AWS Configuration END */
+
 var server = app.listen(3000, function () {
   var port = server.address().port
   console.log(`Pear API Server listening at port ${port}`)

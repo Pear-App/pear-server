@@ -3,6 +3,7 @@ var router = express.Router()
 var passport = require('passport')
 var models = require('../models')
 var fetch = require('node-fetch')
+var request = require('request')
 var helper = require('./helper')
 var CustomError = helper.CustomError
 var SERVER_ERROR_MSG = helper.SERVER_ERROR_MSG
@@ -11,9 +12,32 @@ router.use('*', passport.authenticate(['jwt'], { session: false }), function (re
   next()
 })
 
+function store (s3, photoId, facebookToken) {
+  return new Promise(function (resolve, reject) {
+    var url = `https://graph.facebook.com/${photoId}/picture?access_token=${facebookToken}`
+    request({
+      url: url,
+      encoding: null
+    }, function (err, res, body) {
+      if (err) { reject(err) }
+      s3.putObject({
+        Bucket: 'pear-server',
+        Key: photoId,
+        ContentType: res.headers['content-type'],
+        ContentLength: res.headers['content-length'],
+        Body: body // buffer
+      }, function (err, res) {
+        if (err) { reject(err) }
+        resolve(photoId)
+      })
+    })
+  })
+}
+
 router.get('/', function (req, res) {
   var userId = req.user.userId
   var facebookToken = null
+  var s3 = req.app.get('s3')
 
   models.Users.findById(userId).then(user => {
     if (user) {
@@ -42,9 +66,13 @@ router.get('/', function (req, res) {
   }).then(response => {
     return response.json()
   }).then(photos => {
-    var photoIds = photos.data.map(function (value) {
-      return value.id
+    var promises = []
+    photos.data.map(function (value) {
+      var promise = store(s3, value.id, facebookToken)
+      promises.push(promise)
     })
+    return Promise.all(promises)
+  }).then(photoIds => {
     helper.successLog(req.originalUrl, `GET profile pictures of User ${userId} from Facebook`)
     return res.send(photoIds)
   }).catch(e => {

@@ -624,7 +624,7 @@ Reject invitation with id
 
 ## Photo API
 ### /photo
-Get profile pictures from Facebook
+Get profile pictures from Facebook. Access photos using "https://s3-ap-southeast-1.amazonaws.com/pear-server/{photoId}"
 * **Method**: `GET`
 * **URL Params**: None
 * **Data Params**: None
