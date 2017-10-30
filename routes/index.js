@@ -8,5 +8,6 @@ router.use('/invitation', require('./invitation'))
 router.use('/match', require('./match'))
 router.use('/room', require('./room'))
 router.use('/photo', require('./photo'))
+router.use('/push', require('./push'))
 
 module.exports = router
