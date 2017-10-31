@@ -111,6 +111,20 @@ function addPhotos (photoIds, userId) {
   })
 }
 
+function preloadPhotos(user, s3) {
+  return new Promise(function (resolve, reject) {
+    getProfilePhotos(user).then(photoIds => {
+      return storePhotos(photoIds.slice(0, 6), s3, user.facebookToken, 'normal')
+    }).then(photoIds => {
+      return addPhotos(photoIds, user.id)
+    }).then(photoIds => {
+      resolve(photoIds)
+    }).catch(e => {
+      reject(e)
+    })
+  })
+}
+
 router.get('/', function (req, res) {
   var s3 = req.app.get('s3')
   var userId = req.user.userId
@@ -168,3 +182,4 @@ router.post('/', function (req, res) {
 })
 
 module.exports = router
+module.exports.preloadPhotos = preloadPhotos
