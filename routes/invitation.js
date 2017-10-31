@@ -193,9 +193,9 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
       helper.successLog(req.originalUrl, `New friendship found or created a room id ${roomCreation.id}`)
     }
     if (photosPreload === 'Already Preloaded Photos') {
-      helper.successLog(req.originalUrl, 'Already preloaded profile photos')  
+      helper.successLog(req.originalUrl, 'Already preloaded profile photos')
     } else {
-      helper.successLog(req.originalUrl, 'Preloaded profile photos')      
+      helper.successLog(req.originalUrl, 'Preloaded profile photos')
     }
     return res.json({})
   }).catch((e) => {

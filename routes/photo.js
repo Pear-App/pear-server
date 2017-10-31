@@ -20,7 +20,7 @@ function getProfileAlbum (user, albums) {
       }
     })
     reject(new CustomError('NoProfilePicturesAlbum', `No Profile Pictures album for User ${user.id}`, 'No Profile Pictures album'))
-  })  
+  })
 }
 
 function getProfilePhotos (user) {
@@ -82,7 +82,7 @@ function addPhoto (photoId, order, userId) {
   return models.Photos.create({
     ownerId: userId,
     photoId: photoId,
-    order: order,
+    order: order
   })
 }
 
@@ -91,7 +91,7 @@ function addPhotos (photoIds, userId) {
     var destroyPhotos = models.Photos.findAll({
       where: { ownerId: userId }
     }).then(photos => {
-      photos.map(function(photo) {
+      photos.map(function (photo) {
         photo.destroy()
       })
     })
@@ -111,7 +111,7 @@ function addPhotos (photoIds, userId) {
   })
 }
 
-function preloadPhotos(user, s3) {
+function preloadPhotos (user, s3) {
   return new Promise(function (resolve, reject) {
     getProfilePhotos(user).then(photoIds => {
       return storePhotos(photoIds.slice(0, 6), s3, user.facebookToken, 'normal')
@@ -169,7 +169,7 @@ router.post('/', function (req, res) {
       })
     }
   }).then(_ => {
-    return models.sequelize.transaction(function (t) { 
+    return models.sequelize.transaction(function (t) {
       return addPhotos(photoIds, userId)
     })
   }).then(_ => {
