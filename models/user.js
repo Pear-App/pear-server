@@ -53,6 +53,9 @@ module.exports = function (sequelize, Sequelize) {
       type: Sequelize.STRING,
       allowNull: false
     },
+    fcmToken: {
+      type: Sequelize.STRING
+    },
     createdAt: {
       type: Sequelize.DATE,
       allowNull: false

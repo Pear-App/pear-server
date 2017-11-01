@@ -29,10 +29,12 @@ router.get('/', function (req, res) {
     var regTokens = [user.fcmToken]
     sender.send(message, { registrationTokens: regTokens }, function (err, response) {
       if (err) {
-        return Promise.reject(err)
+        helper.errorLog(req.originalUrl, `Failed to send push notification to User id ${user.id}: ${err}`)
+        res.send({})
+      } else {
+        helper.successLog(req.originalUrl, `Sent push notification to User id ${user.id}`)
+        res.send({})
       }
-      helper.successLog(req.originalUrl, `Sent push notification to User id ${user.id}`)
-      res.send({})
     })
   }).catch(e => {
     if (e.name === 'NoFcmToken') {
