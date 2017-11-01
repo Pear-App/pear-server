@@ -9,7 +9,7 @@ headers.append("Authorization", `bearer ${jwtToken}`)
 ### /authenticate
 * **Method**: `POST`
 * **URL Params**: None
-* **Data Params**: `fbToken: 'yourFbAccessToken'`
+* **Data Params**: `fbToken: 'yourFbAccessToken', fcmToken: 'yourFcmToken'`
 * **Require JWT**: `false`
 * **Success Response**:
     * **Code**: 200 <br />
@@ -58,7 +58,17 @@ Fetch user with id
           "facebookId": "123456789",
           "facebookToken": "ABCDEFGHIJ",
           "createdAt": "2017-10-17T07:38:50.000Z",
-          "updatedAt": "2017-10-17T09:26:19.000Z"
+          "updatedAt": "2017-10-17T09:26:19.000Z",
+          "friend": [
+              {
+                  "id": 2,
+                  "facebookName": "Goh Wei Wen",
+                  "facebookId": "123456789",
+                  "Friendships": {
+                      "review": "SK IS DA BEST"
+                  }
+              }
+          ]
       }
       ```
 * **Error Response**:
