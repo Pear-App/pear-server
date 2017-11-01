@@ -24,7 +24,10 @@ router.get('/', function (req, res) {
     }
 
     var message = new gcm.Message({
-      data: { key1: `Hello ${user.facebookName}` }
+      notification: {
+        title: `Hello ${user.facebookName}`,
+        body: 'This is a msg from Pear'
+      }
     })
     var regTokens = [user.fcmToken]
     sender.send(message, { registrationTokens: regTokens }, function (err, response) {
