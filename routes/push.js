@@ -1,6 +1,10 @@
 var express = require('express')
 var router = express.Router()
 var passport = require('passport')
+var models = require('../models')
+var helper = require('./helper')
+var CustomError = helper.CustomError
+var SERVER_ERROR_MSG = helper.SERVER_ERROR_MSG
 
 router.use('*', passport.authenticate(['jwt'], { session: false }), function (req, res, next) {
   next()
@@ -10,15 +14,35 @@ const gcm = require('node-gcm')
 const sender = new gcm.Sender(process.env.PEAR_FCM_API_KEY)
 
 router.get('/', function (req, res) {
-  var message = new gcm.Message({
-    data: { key1: 'msg1' }
+  const userId = req.user.userId
+
+  models.Users.findById(userId).then(user => {
+    if (!user.fcmToken) {
+      return new Promise(function (resolve, reject) {
+        reject(new CustomError('NoFcmToken', `No fcmToken for User id ${user.id}`, 'No fcmToken'))
+      })
+    }
+
+    var message = new gcm.Message({
+      data: { key1: `Hello ${user.facebookName}` }
+    })
+    var regTokens = [user.fcmToken]
+    sender.send(message, { registrationTokens: regTokens }, function (err, response) {
+      if (err) {
+        return Promise.reject(err)
+      }
+      helper.successLog(req.originalUrl, `Sent push notification to User id ${user.id}`)
+      res.send({})
+    })
+  }).catch(e => {
+    if (e.name === 'NoFcmToken') {
+      helper.errorLog(req.originalUrl, e)
+      return res.status(400).send({ message: e.clientMsg })
+    } else {
+      helper.errorLog(req.originalUrl, e)
+      return res.status(500).send({ message: SERVER_ERROR_MSG })
+    }
   })
-  var regTokens = ['YOUR_REG_TOKEN_HERE']
-  sender.send(message, { registrationTokens: regTokens }, function (err, response) {
-    if (err) console.error(err)
-    else console.log(response)
-  })
-  res.send({})
 })
 
 module.exports = router
