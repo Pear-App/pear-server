@@ -121,15 +121,18 @@ router.get('/friend/:id', function (req, res) {
         {
           model: models.Photos,
           as: 'photos',
-          attributes: {
-            exclude: ['id', 'ownerId', 'createdAt', 'updatedAt']
-          }
+          attributes: ['photoId']
         }
       ],
       order: [[Sequelize.fn('RAND')]],
       limit: 10
     })
   }).then(candidates => {
+    candidates = candidates.map(function (candidate) {
+      const candidateData = candidate.dataValues
+      candidateData.photos = candidateData.photos.map(helper.getPhotoId)
+      return candidateData
+    })
     helper.successLog(req.originalUrl, `friend id ${friendId} gets candidates for single id ${singleId}`)
     res.json(candidates)
   }).catch(e => {
@@ -217,13 +220,16 @@ router.get('/single', function (req, res) {
         {
           model: models.Photos,
           as: 'photos',
-          attributes: {
-            exclude: ['id', 'ownerId', 'createdAt', 'updatedAt']
-          }
+          attributes: ['photoId']
         }
       ]
     })
   }).then(candidates => {
+    candidates = candidates.map(function (candidate) {
+      const candidateData = candidate.dataValues
+      candidateData.photos = candidateData.photos.map(helper.getPhotoId)
+      return candidateData
+    })
     helper.successLog(req.originalUrl, `single id ${singleId} gets candidates`)
     res.json(candidates)
   }).catch(e => {
