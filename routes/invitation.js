@@ -6,6 +6,7 @@ var helper = require('./helper')
 var CustomError = helper.CustomError
 var SERVER_ERROR_MSG = helper.SERVER_ERROR_MSG
 var checkAge = helper.checkAge
+var preloadPhotos = require('./photo').preloadPhotos
 
 router.post('/', passport.authenticate(['jwt'], { session: false }), function (req, res) {
   const inviterId = req.user.userId
@@ -156,6 +157,7 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
     const invitationUpdate = invitation.updateAttributes({
       status: 'Y'
     })
+
     if (!user.isSingle) {
       const userUpdate = user.updateAttributes({
         nickname: invitation.nickname,
@@ -163,18 +165,22 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
         age: invitation.age,
         isSingle: true
       })
+      const photosPreload = preloadPhotos(user, req.app.get('s3'))
       return Promise.all([
         invitationUpdate,
         userUpdate,
-        roomCreation
+        roomCreation,
+        photosPreload
       ])
     }
+
     return Promise.all([
       invitationUpdate,
       Promise.resolve('Already Single'),
-      roomCreation
+      roomCreation,
+      Promise.resolve('Already Preloaded Photos')
     ])
-  }).then(([invitationUpdate, userUpdate, roomCreation]) => {
+  }).then(([invitationUpdate, userUpdate, roomCreation, photosPreload]) => {
     if (invitationUpdate) {
       helper.successLog(req.originalUrl, `Updated invitation status of Invitation id ${invitationUpdate.id} to Accepted`)
     }
@@ -185,6 +191,11 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
     }
     if (roomCreation) {
       helper.successLog(req.originalUrl, `New friendship found or created a room id ${roomCreation.id}`)
+    }
+    if (photosPreload === 'Already Preloaded Photos') {
+      helper.successLog(req.originalUrl, 'Already preloaded profile photos')
+    } else {
+      helper.successLog(req.originalUrl, 'Preloaded profile photos')
     }
     return res.json({})
   }).catch((e) => {

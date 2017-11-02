@@ -37,6 +37,7 @@ const getFBUser = (fbToken) => {
 
 router.post('/', (req, res) => {
   const oldFbToken = req.body.fbToken
+  const fcmToken = req.body.fcmToken
 
   if (!oldFbToken) {
     res.status(400).send({
@@ -64,13 +65,15 @@ router.post('/', (req, res) => {
   }).then(([user, facebookId, facebookName, facebookToken]) => {
     if (user) {
       return user.updateAttributes({
-        facebookToken
+        facebookToken,
+        fcmToken
       })
     } else {
       return models.Users.create({
         facebookId,
         facebookName,
-        facebookToken
+        facebookToken,
+        fcmToken
       })
     }
   }).then((user) => {
