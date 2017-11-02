@@ -564,6 +564,8 @@ Accept invitation with id
       **Content**: `{ message: 'Invalid Invitation id' }`
     * **Code**: 400 <br />
       **Content**: `{ message: 'Invalid User id' }`
+    * **Code**: 400 <br />
+      **Content**: `{ message: 'Cannot accept own invitation' }`
     * **Code**: 500 <br />
       **Content**: `{ message: 'An error occurred with processing your request' }`
 
