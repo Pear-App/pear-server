@@ -23,13 +23,28 @@ router.get('/', function (req, res) {
       })
     }
 
+    var person = { id: 3, facebookName: 'ABC' } // stub
+    var title = 'Pear'
+    var body = `New message from ${person.facebookName}`
+    var route = `/user/${user.id}/chat/${person.id}`
+    var tag = 'message'
+
     var message = new gcm.Message({
       notification: {
-        title: `Hello ${user.facebookName}`,
-        body: 'This is a msg from Pear'
+        title: title,
+        body: body,
+        tag: tag,
+        click_action: 'FCM_PLUGIN_ACTIVITY'
+      },
+      data: {
+        title: title,
+        text: body,
+        route: route
       }
     })
+
     var regTokens = [user.fcmToken]
+
     sender.send(message, { registrationTokens: regTokens }, function (err, response) {
       if (err) {
         helper.errorLog(req.originalUrl, `Failed to send push notification to User id ${user.id}: ${err}`)
