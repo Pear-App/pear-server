@@ -8,6 +8,11 @@ module.exports = function (sequelize, Sequelize) {
       autoIncrement: true,
       allowNull: false
     },
+    isEvent: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
     ownerId: {
       type: Sequelize.INTEGER,
       references: {

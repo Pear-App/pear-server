@@ -43,7 +43,7 @@ module.exports = function (io) {
         where: {
           roomId: roomId
         },
-        attributes: ['id', 'ownerId', 'text', 'createdAt']
+        attributes: ['id', 'ownerId', 'text', 'createdAt', 'isEvent']
       })
     }).then(messages => {
       // TODO: add owner name to messages
