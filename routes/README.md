@@ -68,7 +68,8 @@ Fetch user with id
                       "review": "SK IS DA BEST"
                   }
               }
-          ]
+          ],
+          "photos": ["55555","33333","00000","99999","66666","22222"]
       }
       ```
 * **Error Response**:
@@ -249,32 +250,7 @@ Fetch user details and the user's friends, singles, invitations where the status
                   "inviterId": 3
               }
           ],
-          "photos": [
-              {
-                  "order": 0,
-                  "photoId": "00000"
-              },
-              {
-                  "order": 1,
-                  "photoId": "11111"
-              },
-              {
-                  "order": 2,
-                  "photoId": "22222"
-              },
-              {
-                  "order": 3,
-                  "photoId": "33333"
-              },
-              {
-                  "order": 4,
-                  "photoId": "44444"
-              },
-              {
-                  "order": 5,
-                  "photoId": "55555"
-              }
-          ]
+          "photos": ["55555","33333","00000","99999","66666","22222"]
       }
       ```
 * **Error Response**:
@@ -322,16 +298,7 @@ As a friend, fetch a list of candidates for single with id
                       }
                   }
               ],
-              "photos": [
-                  {
-                      "order": 0,
-                      "photoId": "123"
-                  },
-                  {
-                      "order": 1,
-                      "photoId": "456"
-                  }
-              ]
+              "photos": ["55555","33333","00000","99999","66666","22222"]
           },
           {
               "id": 8,
@@ -354,12 +321,7 @@ As a friend, fetch a list of candidates for single with id
                       }
                   }
               ],
-              "photos": [
-                  {
-                      "order": 0,
-                      "photoId": "789"
-                  }
-              ]
+              "photos": ["55555","33333","00000","99999","66666","22222"]
           }
       ]
       ```
@@ -422,16 +384,7 @@ As a single, fetch a list of candidates
                       }
                   }
               ],
-              "photos": [
-                  {
-                      "order": 0,
-                      "photoId": "123"
-                  },
-                  {
-                      "order": 1,
-                      "photoId": "456"
-                  }
-              ]
+              "photos": ["55555","33333","00000","99999","66666","22222"]
           }
       ]
       ```
@@ -611,6 +564,8 @@ Accept invitation with id
       **Content**: `{ message: 'Invalid Invitation id' }`
     * **Code**: 400 <br />
       **Content**: `{ message: 'Invalid User id' }`
+    * **Code**: 400 <br />
+      **Content**: `{ message: 'Cannot accept own invitation' }`
     * **Code**: 500 <br />
       **Content**: `{ message: 'An error occurred with processing your request' }`
 

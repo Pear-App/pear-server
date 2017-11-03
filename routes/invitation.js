@@ -129,6 +129,9 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
     userId,
     invitationId
   ).then(([user, invitation]) => {
+    if (invitation.inviterId === user.id) {
+      return Promise.reject(new CustomError('SelfInvitationError', `User id ${user.id} cannot accept own invitation where Invitation id ${invitationId}`, 'Cannot accept own invitation'))
+    }
     if (invitation.status !== 'P') {
       return Promise.reject(new CustomError('UsedInvitationError', `There is already a response given for Invitation id ${invitationId}`, 'Invalid Invitation id'))
     }
@@ -199,7 +202,7 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
     }
     return res.json({})
   }).catch((e) => {
-    if (e.name === 'InvalidUserIdError' || e.name === 'InvalidInvitationIdError' || e.name === 'UsedInvitationError') {
+    if (e.name === 'InvalidUserIdError' || e.name === 'InvalidInvitationIdError' || e.name === 'UsedInvitationError' || e.name === 'SelfInvitationError') {
       helper.errorLog(req.originalUrl, e)
       return res.status(400).send({ message: e.clientMsg })
     } else {
