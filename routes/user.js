@@ -260,6 +260,22 @@ router.get('/me', function (req, res) {
   })
 })
 
+router.post('/fcmToken', function (req, res) {
+  const userId = req.user.userId
+
+  models.Users.findById(userId).then(user => {
+    return user.updateAttributes({
+      fcmToken: req.body.fcmToken
+    })
+  }).then(user => {
+    helper.successLog(req.originalUrl, `Update fcmToken for User id ${user.id}`)
+    res.send({})
+  }).catch(e => {
+    helper.errorLog(req.originalUrl, e)
+    return res.status(500).send({ message: SERVER_ERROR_MSG })
+  })
+})
+
 router.get('/:id', function (req, res) {
   models.Users.findOne({
     where: {
