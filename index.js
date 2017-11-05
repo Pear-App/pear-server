@@ -35,6 +35,13 @@ AWS.config.update({
 app.set('s3', new AWS.S3())
 /* END AWS Configuration END */
 
+/* START FCM Configuration START */
+const gcm = require('node-gcm')
+const sender = new gcm.Sender(process.env.PEAR_FCM_API_KEY)
+app.set('gcm', gcm)
+app.set('sender', sender)
+/* END FCM Configuration END */
+
 var server = app.listen(3000, function () {
   var port = server.address().port
   console.log(`Pear API Server listening at port ${port}`)
