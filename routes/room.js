@@ -70,6 +70,7 @@ module.exports = function (io) {
       roomId
     }).then(message => {
       if (message) {
+        helper.push(models, req.app.get('gcm'), req.app.get('sender'), userId, roomId)
         helper.successLog(req.originalUrl, `user id ${userId} created a message id ${message.id} in room id ${roomId}`)
         io.to(`${roomId}`).emit('message', message)
         return res.json({})

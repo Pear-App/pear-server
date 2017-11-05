@@ -9,7 +9,6 @@ module.exports = function (io) {
   router.use('/match', require('./match')(io))
   router.use('/room', require('./room')(io))
   router.use('/photo', require('./photo'))
-  router.use('/push', require('./push'))
 
   return router
 }
