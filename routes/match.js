@@ -6,7 +6,6 @@ module.exports = function (io) {
   var helper = require('./helper')
   var CustomError = helper.CustomError
   var SERVER_ERROR_MSG = helper.SERVER_ERROR_MSG
-  var Sequelize = require('sequelize')
 
   router.use('*', passport.authenticate(['jwt'], { session: false }), function (req, res, next) {
     next()
@@ -150,7 +149,6 @@ module.exports = function (io) {
             attributes: ['photoId']
           }
         ],
-        order: [[Sequelize.fn('RAND')]],
         limit: 10
       })
     }).then(candidates => {
@@ -159,6 +157,7 @@ module.exports = function (io) {
         candidateData.photos = candidateData.photos.map(helper.getPhotoId)
         return candidateData
       })
+      candidates = helper.shuffle(candidates)
       helper.successLog(req.originalUrl, `friend id ${friendId} gets candidates for single id ${singleId}`)
       res.json(candidates)
     }).catch(e => {
