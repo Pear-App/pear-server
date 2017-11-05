@@ -37,7 +37,7 @@ module.exports = {
   getPhotoId: function (photo) {
     return photo.photoId
   },
-  push: function(models, gcm, sender, userId, roomId) {
+  push: function (models, gcm, sender, userId, roomId) {
     models.Rooms.findOne({
       where: { id: roomId },
       attributes: [],
