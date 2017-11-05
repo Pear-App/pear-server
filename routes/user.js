@@ -222,6 +222,12 @@ router.get('/me', function (req, res) {
         model: models.Photos,
         as: 'photos',
         attributes: ['photoId']
+      },
+      {
+        model: models.Users,
+        as: 'blocker',
+        attributes: ['id'],
+        through: { attributes: [] }
       }
     ]
   }).then(user => {
@@ -231,7 +237,7 @@ router.get('/me', function (req, res) {
       // merging two room arrays into one
       userData.rooms = [...userData.firstPerson, ...userData.secondPerson]
       // renaming room person data to a single otherPerson for sanity
-      userData.rooms = userData.rooms.map((room) => {
+      userData.rooms = userData.rooms.map(room => {
         let newRoom = {
           id: room.id,
           isMatch: room.isMatch
@@ -246,6 +252,10 @@ router.get('/me', function (req, res) {
       delete userData.firstPerson
       delete userData.secondPerson
       userData.photos = userData.photos.map(helper.getPhotoId)
+      userData.blockedIds = userData.blocker.map(blockedUser => {
+        return blockedUser.id
+      })
+      delete userData.blocker
       helper.successLog(req.originalUrl, `GET friends of User id ${req.user.userId}`)
       return res.json(userData)
     } else {
