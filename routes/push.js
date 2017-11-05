@@ -13,23 +13,7 @@ router.use('*', passport.authenticate(['jwt'], { session: false }), function (re
 const gcm = require('node-gcm')
 const sender = new gcm.Sender(process.env.PEAR_FCM_API_KEY)
 
-router.post('/', function (req, res) {
-  const userId = req.user.userId
-
-  models.Users.findById(userId).then(user => {
-    return user.updateAttributes({
-      fcmToken: req.body.fcmToken
-    })
-  }).then(user => {
-    helper.successLog(req.originalUrl, `Update fcmToken for User id ${user.id}`)
-    res.send({})
-  }).catch(e => {
-    helper.errorLog(req.originalUrl, e)
-    return res.status(500).send({ message: SERVER_ERROR_MSG })
-  })
-})
-
-router.get('/test', function (req, res) {
+router.get('/', function (req, res) {
   const userId = req.user.userId
 
   models.Users.findById(userId).then(user => {
