@@ -221,9 +221,7 @@ router.get('/me', function (req, res) {
       {
         model: models.Photos,
         as: 'photos',
-        attributes: {
-          exclude: ['id', 'ownerId', 'createdAt', 'updatedAt']
-        }
+        attributes: ['photoId']
       }
     ]
   }).then(user => {
@@ -247,6 +245,7 @@ router.get('/me', function (req, res) {
       })
       delete userData.firstPerson
       delete userData.secondPerson
+      userData.photos = userData.photos.map(helper.getPhotoId)
       helper.successLog(req.originalUrl, `GET friends of User id ${req.user.userId}`)
       return res.json(userData)
     } else {
@@ -261,21 +260,46 @@ router.get('/me', function (req, res) {
   })
 })
 
+router.post('/fcmToken', function (req, res) {
+  const userId = req.user.userId
+
+  models.Users.findById(userId).then(user => {
+    return user.updateAttributes({
+      fcmToken: req.body.fcmToken
+    })
+  }).then(user => {
+    helper.successLog(req.originalUrl, `Update fcmToken for User id ${user.id}`)
+    res.send({})
+  }).catch(e => {
+    helper.errorLog(req.originalUrl, e)
+    return res.status(500).send({ message: SERVER_ERROR_MSG })
+  })
+})
+
 router.get('/:id', function (req, res) {
   models.Users.findOne({
     where: {
       id: req.params.id
     },
-    include: [{
-      model: models.Users,
-      as: 'friend',
-      attributes: ['id', 'facebookName', 'facebookId'],
-      through: { attributes: ['review'] }
-    }]
+    include: [
+      {
+        model: models.Users,
+        as: 'friend',
+        attributes: ['id', 'facebookName', 'facebookId'],
+        through: { attributes: ['review'] }
+      },
+      {
+        model: models.Photos,
+        as: 'photos',
+        attributes: ['photoId']
+      }
+    ]
   }).then(user => {
     if (user) {
+      const userData = user.dataValues
+      userData.photos = userData.photos.map(helper.getPhotoId)
       helper.successLog(req.originalUrl, `GET User id ${req.params.id}`)
-      return res.json(user)
+      return res.json(userData)
     } else {
       return new Promise(function (resolve, reject) {
         reject(new CustomError('InvalidUserIdError', `Invalid User id ${req.params.id}`, 'Invalid User id'))

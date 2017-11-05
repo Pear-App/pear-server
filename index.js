@@ -35,8 +35,6 @@ AWS.config.update({
 app.set('s3', new AWS.S3())
 /* END AWS Configuration END */
 
-app.use('/api', require('./routes/index'))
-
 var server = app.listen(3000, function () {
   var port = server.address().port
   console.log(`Pear API Server listening at port ${port}`)
@@ -56,5 +54,7 @@ io.on('connect', function (socket) {
     })
   })
 })
+
+app.use('/api', require('./routes/index')(io))
 
 module.exports = app

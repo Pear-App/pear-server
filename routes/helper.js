@@ -33,5 +33,8 @@ module.exports = {
         reject(new module.exports.CustomError('InvalidAgeRange', 'Invalid age range', 'Invalid age range'))
       }
     })
+  },
+  getPhotoId: function (photo) {
+    return photo.photoId
   }
 }
