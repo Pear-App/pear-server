@@ -63,6 +63,7 @@ function storePhoto (photoId, s3, facebookToken, size) {
         Body: body // buffer
       }, function (err, res) {
         if (err) { reject(err) }
+        console.log(`SAVED ${key}`)
         resolve(photoId)
       })
     })
@@ -88,15 +89,16 @@ function addPhoto (photoId, order, userId) {
 
 function addPhotos (photoIds, userId) {
   return new Promise(function (resolve, reject) {
-    var destroyPhotos = models.Photos.findAll({
+    models.Photos.findAll({
       where: { ownerId: userId }
     }).then(photos => {
+      var promises = []
       photos.map(function (photo) {
-        photo.destroy()
+        var promise = photo.destroy()
+        promises.push(promise)
       })
-    })
-
-    Promise.all([destroyPhotos]).then(_ => {
+      return Promise.all(promises)
+    }).then(_ => {
       var promises = []
       photoIds.forEach(function (photoId, order) {
         var promise = addPhoto(photoId, order, userId)
