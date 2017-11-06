@@ -141,7 +141,12 @@ module.exports = function (io) {
             model: models.Users,
             as: 'friend',
             attributes: ['id', 'facebookName', 'facebookId'],
-            through: { attributes: ['review'] }
+            through: { attributes: ['review'] },
+            include: [{
+              model: models.Photos,
+              as: 'photos',
+              attributes: ['photoId']
+            }]
           },
           {
             model: models.Photos,
@@ -155,6 +160,11 @@ module.exports = function (io) {
       candidates = candidates.map(function (candidate) {
         const candidateData = candidate.dataValues
         candidateData.photos = candidateData.photos.map(helper.getPhotoId)
+        candidateData.friend = candidateData.friend.map(function (user) {
+          const data = user.dataValues
+          data.photos = data.photos.map(helper.getPhotoId)
+          return data
+        })
         return candidateData
       })
       candidates = helper.shuffle(candidates)
@@ -240,7 +250,12 @@ module.exports = function (io) {
             model: models.Users,
             as: 'friend',
             attributes: ['id', 'facebookName', 'facebookId'],
-            through: { attributes: ['review'] }
+            through: { attributes: ['review'] },
+            include: [{
+              model: models.Photos,
+              as: 'photos',
+              attributes: ['photoId']
+            }]
           },
           {
             model: models.Photos,
@@ -253,6 +268,11 @@ module.exports = function (io) {
       candidates = candidates.map(function (candidate) {
         const candidateData = candidate.dataValues
         candidateData.photos = candidateData.photos.map(helper.getPhotoId)
+        candidateData.friend = candidateData.friend.map(function (user) {
+          const data = user.dataValues
+          data.photos = data.photos.map(helper.getPhotoId)
+          return data
+        })
         return candidateData
       })
       helper.successLog(req.originalUrl, `single id ${singleId} gets candidates`)

@@ -175,13 +175,23 @@ router.get('/me', function (req, res) {
         model: models.Users,
         as: 'friend',
         attributes: ['id', 'facebookName', 'facebookId'],
-        through: { attributes: ['review'] }
+        through: { attributes: ['review'] },
+        include: [{
+          model: models.Photos,
+          as: 'photos',
+          attributes: ['photoId']
+        }]
       },
       {
         model: models.Users,
         as: 'single',
         attributes: ['id', 'facebookName', 'facebookId'],
-        through: { attributes: [] }
+        through: { attributes: [] },
+        include: [{
+          model: models.Photos,
+          as: 'photos',
+          attributes: ['photoId']
+        }]
       },
       {
         model: models.Invitations,
@@ -251,7 +261,18 @@ router.get('/me', function (req, res) {
       })
       delete userData.firstPerson
       delete userData.secondPerson
+
       userData.photos = userData.photos.map(helper.getPhotoId)
+      userData.friend = userData.friend.map(function (user) {
+        const data = user.dataValues
+        data.photos = data.photos.map(helper.getPhotoId)
+        return data
+      })
+      userData.single = userData.single.map(function (user) {
+        const data = user.dataValues
+        data.photos = data.photos.map(helper.getPhotoId)
+        return data
+      })
       userData.blockedIds = userData.blocker.map(blockedUser => {
         return blockedUser.id
       })
@@ -296,7 +317,12 @@ router.get('/:id', function (req, res) {
         model: models.Users,
         as: 'friend',
         attributes: ['id', 'facebookName', 'facebookId'],
-        through: { attributes: ['review'] }
+        through: { attributes: ['review'] },
+        include: [{
+          model: models.Photos,
+          as: 'photos',
+          attributes: ['photoId']
+        }]
       },
       {
         model: models.Photos,
@@ -308,6 +334,11 @@ router.get('/:id', function (req, res) {
     if (user) {
       const userData = user.dataValues
       userData.photos = userData.photos.map(helper.getPhotoId)
+      userData.friend = userData.friend.map(function (user) {
+        const data = user.dataValues
+        data.photos = data.photos.map(helper.getPhotoId)
+        return data
+      })
       helper.successLog(req.originalUrl, `GET User id ${req.params.id}`)
       return res.json(userData)
     } else {
