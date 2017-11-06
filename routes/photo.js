@@ -118,6 +118,8 @@ function preloadPhotos (user, s3) {
     getProfilePhotos(user).then(photoIds => {
       return storePhotos(photoIds.slice(0, 6), s3, user.facebookToken, 'normal')
     }).then(photoIds => {
+      return storePhotos(photoIds.slice(0, 6), s3, user.facebookToken, 'album')
+    }).then(photoIds => {
       return addPhotos(photoIds, user.id)
     }).then(photoIds => {
       resolve(photoIds)
