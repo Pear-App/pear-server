@@ -10,6 +10,7 @@ module.exports = function (io) {
   router.use('/room', require('./room')(io))
   router.use('/photo', require('./photo'))
   router.use('/blacklist', require('./blacklist'))
+  router.use('/flaglist', require('./flaglist'))
 
   return router
 }

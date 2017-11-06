@@ -38,6 +38,9 @@ module.exports = {
     return photo.photoId
   },
   push: function (models, gcm, sender, userId, roomId) {
+    let user = null
+    let otherPerson = null
+
     models.Rooms.findOne({
       where: { id: roomId },
       attributes: [],
@@ -54,8 +57,20 @@ module.exports = {
         }
       ]
     }).then(room => {
-      const user = room.firstPerson.id === userId ? room.firstPerson : room.secondPerson
-      const otherPerson = room.firstPerson.id !== userId ? room.firstPerson : room.secondPerson
+      user = room.firstPerson.id === userId ? room.firstPerson : room.secondPerson
+      otherPerson = room.firstPerson.id !== userId ? room.firstPerson : room.secondPerson
+
+      return models.Blacklists.findOne({
+        where: {
+          blocker: otherPerson.id,
+          blockee: user.id
+        }
+      })
+    }).then(blacklist => {
+      if (blacklist) {
+        module.exports.errorLog('[PUSH]', `Failed to send push notification to User id ${otherPerson.id} as User id ${user.id} is blocked`)
+        return
+      }
 
       const body = `New message from ${user.facebookName}`
       const route = `/user/${otherPerson.id}/chat/${user.id}`
