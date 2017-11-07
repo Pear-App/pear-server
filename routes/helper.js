@@ -37,7 +37,7 @@ module.exports = {
   getPhotoId: function (photo) {
     return photo.photoId
   },
-  push: function (models, gcm, sender, userId, roomId) {
+  push: function (models, gcm, sender, userId, roomId, message) {
     let user = null
     let otherPerson = null
 
@@ -72,15 +72,13 @@ module.exports = {
         return
       }
 
-      const body = `New message from ${user.facebookName}`
+      const body = message.isEvent ? message.text : `${user.facebookName}: ${message.text}`
       const route = `/user/${otherPerson.id}/chat/${user.id}`
-      const tag = 'message'
 
-      const message = new gcm.Message({
+      const pushNotification = new gcm.Message({
         priority: 'high',
         notification: {
           body: body,
-          tag: tag,
           click_action: 'FCM_PLUGIN_ACTIVITY'
         },
         data: {
@@ -89,7 +87,7 @@ module.exports = {
         }
       })
 
-      sender.send(message, { registrationTokens: [otherPerson.fcmToken] }, function (err, response) {
+      sender.send(pushNotification, { registrationTokens: [otherPerson.fcmToken] }, function (err, response) {
         if (err) {
           module.exports.errorLog('[PUSH]', `Failed to send push notification to User id ${otherPerson.id}: ${err}`)
         } else {

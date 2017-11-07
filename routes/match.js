@@ -80,7 +80,7 @@ module.exports = function (io) {
     })
   }
 
-  function createFriendNotification (friendId, singleId) {
+  function createFriendNotification (req, friendId, singleId) {
     return new Promise(function (resolve, reject) {
       Promise.all([
         models.Rooms.findOne({
@@ -92,16 +92,22 @@ module.exports = function (io) {
         models.Users.findById(singleId)
       ]).then(([room, singleUser]) => {
         if (room && singleUser) {
-          return models.Messages.create({
-            ownerId: singleId,
-            isEvent: true,
-            roomId: room.id,
-            text: `Hooray! ${singleUser.facebookName} just matched with a date recommmended by you!`
-          })
+          return Promise.all([
+            room,
+            models.Messages.create({
+              ownerId: singleId,
+              isEvent: true,
+              roomId: room.id,
+              text: `Hooray! ${singleUser.facebookName} just matched with a date recommmended by you!`
+            })
+          ])
         } else {
           reject(new CustomError('InvalidFriendNoticationError', `Either cannot find room between user id ${friendId} and user id ${singleId} or cannot find user id ${singleId} `, 'Invalid Friend Notification'))
         }
-      }).then(message => resolve(message))
+      }).then(([room, message]) => {
+        helper.push(models, req.app.get('gcm'), req.app.get('sender'), singleId, room.id, message)
+        resolve(message)
+      })
     })
   }
 
@@ -297,16 +303,19 @@ module.exports = function (io) {
       models.Matches.findOne({
         where: {
           single: candidateId,
-          candidate: singleId
+          candidate: singleId,
+          singleChoice: true,
+          friendChoice: true
         }
       })
     ]).then(([currentMatch, oppositeMatch]) => {
       const matchUpdate = currentMatch.updateAttributes({
         singleChoice: singleChoice
       })
-      if (singleChoice && oppositeMatch && oppositeMatch.singleChoice) {
+      if (singleChoice && oppositeMatch) {
         return Promise.all([
           matchUpdate,
+          oppositeMatch,
           models.Rooms.create({
             firstPersonId: Math.min(singleId, candidateId),
             secondPersonId: Math.max(singleId, candidateId),
@@ -314,21 +323,24 @@ module.exports = function (io) {
           })
         ])
       }
-      return Promise.all([
-        matchUpdate,
-        null
-      ])
-    }).then(([currentMatch, room]) => {
+      return Promise.all([null, null, null])
+    }).then(([currentMatch, oppositeMatch, room]) => {
+      helper.successLog(req.originalUrl, `single id ${singleId} swipes ${singleChoice} to candidate id ${candidateId}`)
       if (room) {
         helper.successLog(req.originalUrl, `mutual match completed by single id ${singleId} created a room id ${room.id}`)
-        return createFriendNotification(currentMatch.friend, currentMatch.single)
+        var push1 = createFriendNotification(req, currentMatch.friend, currentMatch.single)
+        var push2 = createFriendNotification(req, oppositeMatch.friend, oppositeMatch.single)
+        return Promise.all([push1, push2])
       }
-      helper.successLog(req.originalUrl, `single id ${singleId} swipes ${singleChoice} to candidate id ${candidateId}`)
-      return null
-    }).then(message => {
-      if (message) {
-        helper.successLog(req.originalUrl, `message id ${message.id} created to notify matchmaker of user id ${singleId} of successful match`)
-        io.to(`${message.roomId}`).emit('message', message)
+      return Promise.all([null, null])
+    }).then(([msg1, msg2]) => {
+      if (msg1) {
+        helper.successLog(req.originalUrl, `message id ${msg1.id} created to notify matchmaker of user id ${singleId} of successful match`)
+        io.to(`${msg1.roomId}`).emit('message', msg1)
+      }
+      if (msg2) {
+        helper.successLog(req.originalUrl, `message id ${msg2.id} created to notify matchmaker of user id ${candidateId} of successful match`)
+        io.to(`${msg2.roomId}`).emit('message', msg2)
       }
       res.json({})
     }).catch(e => {
