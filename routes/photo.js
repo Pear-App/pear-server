@@ -46,26 +46,46 @@ function getProfilePhotos (user) {
   })
 }
 
+function checkPhoto (s3, key) {
+  return new Promise(function (resolve, reject) {
+    s3.headObject({
+      Bucket: 'pear-server',
+      Key: key
+    }, function (err, metadata) {
+      if (err && err.code === 'NotFound') {
+        resolve()
+      } else {
+        reject(new Error())
+      }
+    })
+  })
+}
+
 function storePhoto (photoId, s3, facebookToken, size) {
   return new Promise(function (resolve, reject) {
-    var url = `https://graph.facebook.com/${photoId}/picture?access_token=${facebookToken}&type=${size}`
     var key = size + photoId
-    request({
-      url: url,
-      encoding: null
-    }, function (err, res, body) {
-      if (err) { reject(err) }
-      s3.putObject({
-        Bucket: 'pear-server',
-        Key: key,
-        ContentType: res.headers['content-type'],
-        ContentLength: res.headers['content-length'],
-        Body: body // buffer
-      }, function (err, res) {
+    checkPhoto(s3, key).then(_ => {
+      var url = `https://graph.facebook.com/${photoId}/picture?access_token=${facebookToken}&type=${size}`
+      request({
+        url: url,
+        encoding: null
+      }, function (err, res, body) {
         if (err) { reject(err) }
-        console.log(`SAVED ${key}`)
-        resolve(photoId)
+        s3.putObject({
+          Bucket: 'pear-server',
+          Key: key,
+          ContentType: res.headers['content-type'],
+          ContentLength: res.headers['content-length'],
+          Body: body // buffer
+        }, function (err, res) {
+          if (err) { reject(err) }
+          console.log(`SAVED ${key}`)
+          resolve(photoId)
+        })
       })
+    }).catch(_ => {
+      console.log(`ALREADY HAS ${key}`)
+      resolve(photoId)
     })
   })
 }
