@@ -37,8 +37,9 @@ router.post('/:id/edit', function (req, res) {
   var singleId = req.params.id
   var friendId = req.user.userId
   var age = req.body.age
-  var minAge = req.body.minAge
-  var maxAge = req.body.maxAge
+  var minAge = req.body.minAge || 18
+  var maxAge = req.body.maxAge || 80
+  var sexualOrientation = req.body.sexualOrientation || (req.body.sex === 'F' ? 'M' : 'F')
 
   checkAge(age, minAge, maxAge).then(_ => {
     return checkAgeRange(minAge, maxAge)
@@ -55,7 +56,7 @@ router.post('/:id/edit', function (req, res) {
         school: req.body.school,
         major: req.body.major,
         sex: req.body.sex,
-        sexualOrientation: req.body.sexualOrientation,
+        sexualOrientation: sexualOrientation,
         age: age,
         minAge: minAge,
         maxAge: maxAge,
