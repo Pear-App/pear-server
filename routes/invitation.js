@@ -150,11 +150,15 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
   }).then(([user, invitation, friendship]) => {
     let roomCreation = Promise.resolve(false)
     if (friendship) {
-      helper.successLog(req.originalUrl, `Created Friendship where single id ${friendship[0].single} and friend id ${friendship[0].friend}`)
-      roomCreation = models.Rooms.create({
-        firstPersonId: Math.min(friendship[0].single, friendship[0].friend),
-        secondPersonId: Math.max(friendship[0].single, friendship[0].friend),
-        isMatch: false
+      helper.successLog(req.originalUrl, `Found or created Friendship where single id ${friendship[0].single} and friend id ${friendship[0].friend}`)
+      roomCreation = models.Rooms.findOrCreate({
+        where: {
+          firstPersonId: Math.min(friendship[0].single, friendship[0].friend),
+          secondPersonId: Math.max(friendship[0].single, friendship[0].friend),
+        },
+        defaults: { 
+          isMatch: false
+        }
       })
     }
     const invitationUpdate = invitation.updateAttributes({
