@@ -74,26 +74,28 @@ module.exports = {
 
       const body = message.isEvent ? message.text : `${user.facebookName}: ${message.text}`
       const route = `/user/${otherPerson.id}/chat/${user.id}`
+      module.exports.send(gcm, sender, body, route, otherPerson)
+    })
+  },
+  send: function (gcm, sender, body, route, otherPerson) {
+    const pushNotification = new gcm.Message({
+      priority: 'high',
+      notification: {
+        body: body,
+        click_action: 'FCM_PLUGIN_ACTIVITY'
+      },
+      data: {
+        text: body,
+        route: route
+      }
+    })
 
-      const pushNotification = new gcm.Message({
-        priority: 'high',
-        notification: {
-          body: body,
-          click_action: 'FCM_PLUGIN_ACTIVITY'
-        },
-        data: {
-          text: body,
-          route: route
-        }
-      })
-
-      sender.send(pushNotification, { registrationTokens: [otherPerson.fcmToken] }, function (err, response) {
-        if (err) {
-          module.exports.errorLog('[PUSH]', `Failed to send push notification to User id ${otherPerson.id}: ${err}`)
-        } else {
-          module.exports.successLog('[PUSH]', `Sent push notification to User id ${otherPerson.id}`)
-        }
-      })
+    sender.send(pushNotification, { registrationTokens: [otherPerson.fcmToken] }, function (err, response) {
+      if (err) {
+        module.exports.errorLog('[PUSH]', `Failed to send push notification to User id ${otherPerson.id}: ${err}`)
+      } else {
+        module.exports.successLog('[PUSH]', `Sent push notification to User id ${otherPerson.id}`)
+      }
     })
   },
   shuffle: function (a) {
