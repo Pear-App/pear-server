@@ -298,7 +298,12 @@ module.exports = function (io) {
         where: {
           single: singleId,
           candidate: candidateId
-        }
+        },
+        include: [{
+          model: models.Users,
+          as: 'singles',
+          attributes: ['id', 'fcmToken']
+        }]
       }),
       models.Matches.findOne({
         where: {
@@ -306,7 +311,12 @@ module.exports = function (io) {
           candidate: singleId,
           singleChoice: true,
           friendChoice: true
-        }
+        },
+        include: [{
+          model: models.Users,
+          as: 'singles',
+          attributes: ['id', 'fcmToken']
+        }]
       })
     ]).then(([currentMatch, oppositeMatch]) => {
       const matchUpdate = currentMatch.updateAttributes({
@@ -316,10 +326,14 @@ module.exports = function (io) {
         return Promise.all([
           matchUpdate,
           oppositeMatch,
-          models.Rooms.create({
-            firstPersonId: Math.min(singleId, candidateId),
-            secondPersonId: Math.max(singleId, candidateId),
-            isMatch: true
+          models.Rooms.findOrCreate({
+            where: {
+              firstPersonId: Math.min(singleId, candidateId),
+              secondPersonId: Math.max(singleId, candidateId)
+            },
+            defaults: {
+              isMatch: true
+            }
           })
         ])
       }
@@ -330,6 +344,8 @@ module.exports = function (io) {
         helper.successLog(req.originalUrl, `mutual match completed by single id ${singleId} created a room id ${room.id}`)
         var push1 = createFriendNotification(req, currentMatch.friend, currentMatch.single)
         var push2 = createFriendNotification(req, oppositeMatch.friend, oppositeMatch.single)
+        helper.send(req.app.get('gcm'), req.app.get('sender'), 'Chat with your new match!', `/user/${currentMatch.single}/chat/${oppositeMatch.single}`, currentMatch.singles)
+        helper.send(req.app.get('gcm'), req.app.get('sender'), 'Chat with your new match!', `/user/${oppositeMatch.single}/chat/${currentMatch.single}`, oppositeMatch.singles)
         return Promise.all([push1, push2])
       }
       return Promise.all([null, null])
