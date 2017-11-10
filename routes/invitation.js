@@ -138,7 +138,9 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
     const friendship = models.Friendships.findOrCreate({
       where: {
         single: userId,
-        friend: invitation.inviterId,
+        friend: invitation.inviterId
+      },
+      defaults: {
         review: invitation.review
       }
     })
@@ -148,19 +150,29 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
       friendship
     ])
   }).then(([user, invitation, friendship]) => {
-    let roomCreation = Promise.resolve(false)
-    if (friendship) {
-      helper.successLog(req.originalUrl, `Found or created Friendship where single id ${friendship[0].single} and friend id ${friendship[0].friend}`)
-      roomCreation = models.Rooms.findOrCreate({
-        where: {
-          firstPersonId: Math.min(friendship[0].single, friendship[0].friend),
-          secondPersonId: Math.max(friendship[0].single, friendship[0].friend),
-        },
-        defaults: { 
-          isMatch: false
-        }
-      })
-    }
+    const room = models.Rooms.findOrCreate({
+      where: {
+        firstPersonId: Math.min(friendship[0].single, friendship[0].friend),
+        secondPersonId: Math.max(friendship[0].single, friendship[0].friend)
+      },
+      defaults: {
+        isMatch: false
+      }
+    })
+    return Promise.all([
+      Promise.resolve(user),
+      Promise.resolve(invitation),
+      Promise.resolve(friendship),
+      room
+    ])
+  }).then(([user, invitation, friendship, room]) => {
+    const message = models.Messages.create({
+      ownerId: user.id,
+      isEvent: true,
+      roomId: room[0].id,
+      text: `Hooray! ${user.facebookName} just accepted your invitation!`
+    })
+
     const invitationUpdate = invitation.updateAttributes({
       status: 'Y'
     })
@@ -174,35 +186,37 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
       })
       const photosPreload = preloadPhotos(user, req.app.get('s3'))
       return Promise.all([
+        Promise.resolve(room),
+        message,
         invitationUpdate,
         userUpdate,
-        roomCreation,
         photosPreload
       ])
     }
 
     return Promise.all([
+      Promise.resolve(room),
+      message,
       invitationUpdate,
       Promise.resolve('Already Single'),
-      roomCreation,
       Promise.resolve('Already Preloaded Photos')
     ])
-  }).then(([invitationUpdate, userUpdate, roomCreation, photosPreload]) => {
+  }).then(([room, message, invitationUpdate, userUpdate, photosPreload]) => {
+    if (message) {
+      helper.push(models, req.app.get('gcm'), req.app.get('sender'), message.ownerId, room[0].id, message)
+    }
     if (invitationUpdate) {
       helper.successLog(req.originalUrl, `Updated invitation status of Invitation id ${invitationUpdate.id} to Accepted`)
     }
     if (userUpdate === 'Already Single') {
-      helper.successLog(req.originalUrl, `No update to profile of User id ${userUpdate.id} who is already a Single`)
+      helper.successLog(req.originalUrl, `User id ${userUpdate.id} already single`)
     } else if (userUpdate) {
-      helper.successLog(req.originalUrl, `Updated profile of User id ${userUpdate.id}`)
-    }
-    if (roomCreation) {
-      helper.successLog(req.originalUrl, `New friendship found or created a room id ${roomCreation.id}`)
+      helper.successLog(req.originalUrl, `Set to isSingle for User id ${userUpdate.id}`)
     }
     if (photosPreload === 'Already Preloaded Photos') {
-      helper.successLog(req.originalUrl, 'Already preloaded profile photos')
+      helper.successLog(req.originalUrl, `User id ${userUpdate.id} already preloaded profile photos`)
     } else {
-      helper.successLog(req.originalUrl, 'Preloaded profile photos')
+      helper.successLog(req.originalUrl, `Preloaded profile photos for User id ${userUpdate.id}`)
     }
     return res.json({})
   }).catch((e) => {
