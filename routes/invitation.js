@@ -181,7 +181,10 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
       const userUpdate = user.updateAttributes({
         nickname: invitation.nickname,
         sex: invitation.sex,
+        sexualOrientation: req.body.sex === 'F' ? 'M' : 'F',
         age: invitation.age,
+        minAge: 18,
+        maxAge: 80,
         isSingle: true
       })
       const photosPreload = preloadPhotos(user, req.app.get('s3'))
@@ -189,8 +192,7 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
         Promise.resolve(room),
         message,
         invitationUpdate,
-        userUpdate,
-        photosPreload
+        userUpdate
       ])
     }
 
@@ -198,10 +200,9 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
       Promise.resolve(room),
       message,
       invitationUpdate,
-      Promise.resolve('Already Single'),
-      Promise.resolve('Already Preloaded Photos')
+      Promise.resolve('Already Single')
     ])
-  }).then(([room, message, invitationUpdate, userUpdate, photosPreload]) => {
+  }).then(([room, message, invitationUpdate, userUpdate]) => {
     if (message) {
       helper.push(models, req.app.get('gcm'), req.app.get('sender'), message.ownerId, room[0].id, message)
     }
@@ -212,11 +213,6 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
       helper.successLog(req.originalUrl, `User id ${userUpdate.id} already single`)
     } else if (userUpdate) {
       helper.successLog(req.originalUrl, `Set to isSingle for User id ${userUpdate.id}`)
-    }
-    if (photosPreload === 'Already Preloaded Photos') {
-      helper.successLog(req.originalUrl, `User id ${userUpdate.id} already preloaded profile photos`)
-    } else {
-      helper.successLog(req.originalUrl, `Preloaded profile photos for User id ${userUpdate.id}`)
     }
     return res.json({})
   }).catch((e) => {
