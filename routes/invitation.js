@@ -181,7 +181,7 @@ router.post('/:id/accept', passport.authenticate(['jwt'], { session: false }), f
       const userUpdate = user.updateAttributes({
         nickname: invitation.nickname,
         sex: invitation.sex,
-        sexualOrientation: req.body.sex === 'F' ? 'M' : 'F',
+        sexualOrientation: invitation.sex === 'F' ? 'M' : 'F',
         age: invitation.age,
         minAge: 18,
         maxAge: 80,
