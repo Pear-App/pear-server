@@ -207,3 +207,4 @@ router.post('/', function (req, res) {
 
 module.exports = router
 module.exports.preloadPhotos = preloadPhotos
+module.exports.checkPhoto = checkPhoto

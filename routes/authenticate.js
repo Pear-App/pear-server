@@ -5,6 +5,9 @@ const router = express.Router()
 
 const jwt = require('jsonwebtoken')
 const fetch = require('node-fetch')
+const request = require('request')
+
+const checkPhoto = require('./photo').checkPhoto
 
 const fbClientId = process.env.PEAR_FB_CLIENT_ID
 const fbClientSecret = process.env.PEAR_FB_CLIENT_SECRET
@@ -35,9 +38,44 @@ const getFBUser = (fbToken) => {
   return fetch(fullUrl).then((response) => response.json())
 }
 
+const fetchFirstPhoto = (user, s3, size) => {
+  const photoUrl = `https://graph.facebook.com/${user.facebookId}/picture?size=${size}`
+  const key = size + user.facebookId
+  checkPhoto(s3, key).then(_ => {
+    return new Promise((resolve, reject) => {
+      request({
+        url: photoUrl,
+        encoding: null
+      }, function (err, res, body) {
+        if (err) { reject(err) }
+        s3.putObject({
+          Bucket: 'pear-server',
+          Key: key,
+          ContentType: res.headers['content-type'],
+          ContentLength: res.headers['content-length'],
+          Body: body // buffer
+        }, function (err, res) {
+          if (err) { reject(err) }
+          console.log(`SAVED ${key}`)
+          resolve(user.facebookId)
+        })
+      })
+    })
+  }).then(key => {
+    return models.Photos.create({
+      ownerId: user.id,
+      photoId: key,
+      order: 0
+    })
+  }).catch(_ => {
+    console.log(`ALREADY HAS ${key}`)
+  })
+}
+
 router.post('/', (req, res) => {
   const oldFbToken = req.body.fbToken
   const fcmToken = req.body.fcmToken
+  const s3 = req.app.get('s3')
 
   if (!oldFbToken) {
     res.status(400).send({
@@ -77,6 +115,7 @@ router.post('/', (req, res) => {
       })
     }
   }).then((user) => {
+    fetchFirstPhoto(user, s3, 'album')
     const payload = {
       user: {
         userId: user.id
